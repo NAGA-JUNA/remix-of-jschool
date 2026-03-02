@@ -1,42 +1,87 @@
 
 
-# Fix: Testimonials Section Invisible Cards + Better Layout
+# Testimonials Slider + Mobile-Friendly Core Values & Leadership
 
-## Problem
-The testimonial cards are set to `opacity:0` with a CSS transition for scroll-reveal animation, but the JavaScript IntersectionObserver only watches `.quote-banner` elements — it never triggers on the testimonial cards. Result: the heading shows but all cards remain invisible (the empty box seen in screenshots).
+## Overview
+Three improvements to the About page in a single file (`php-backend/public/about.php`):
 
-## Changes (1 file: `php-backend/public/about.php`)
+1. Convert the Testimonials grid into a touch-friendly auto-playing carousel/slider
+2. Make Core Values section scroll horizontally on mobile instead of stacking vertically
+3. Make Leadership section more compact and polished on mobile
 
-### Fix 1: Add a CSS class for animated cards (line 331)
-Add a shared class `reveal-card` to testimonial cards so the observer can target them:
-```php
-<div class="card about-card shadow-sm h-100 reveal-card" style="opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease;">
-```
+---
 
-### Fix 2: Update the IntersectionObserver (line 394)
-Extend the observer to also watch `.reveal-card` elements:
-```js
-document.querySelectorAll('.quote-banner, .reveal-card').forEach(el => observer.observe(el));
-```
+## 1. Testimonials: Grid to Slider/Carousel
 
-### Fix 3: Better visual layout for mobile and desktop
+Replace the current `row g-4` grid with a CSS-only horizontal slider (no extra JS library needed).
 
-Replace the current simple card grid with a more polished testimonial design:
+**How it works:**
+- A horizontally scrollable container with `scroll-snap-type: x mandatory`
+- Each card is a fixed-width snap point (`scroll-snap-align: start`)
+- On desktop: shows 3 cards side by side (same as current)
+- On tablet: shows 2 cards
+- On mobile: shows 1 card at a time, swipeable left/right
+- Auto-play via a small JS `setInterval` that scrolls to the next card every 4 seconds, pausing on hover/touch
+- Left/right arrow buttons for manual navigation
+- Dot indicators showing current position
 
-- **Desktop (lg):** 3-column card grid with subtle left border accent, quote icon, and star rating
-- **Tablet (md):** 2-column grid
-- **Mobile:** Single column, slightly reduced padding
+**CSS additions:**
+- `.testimonial-slider` -- horizontal scroll container with hidden scrollbar
+- `.testimonial-slide` -- each card with snap alignment
+- `.slider-arrows` -- prev/next buttons
+- `.slider-dots` -- active dot indicator
 
-Style improvements per card:
-- Add a subtle left border accent color (`border-left: 3px solid #3b82f6`)
-- Add a small quote icon at the top-right corner
-- Improve spacing between photo/name/rating/message
-- Use `font-style: italic` on the message for a testimonial feel
+**JS additions (~30 lines):**
+- Auto-scroll timer with pause on hover
+- Arrow click handlers
+- Dot sync on scroll
 
-This keeps the existing Bootstrap grid structure but adds visual polish matching the rest of the About page design.
+---
 
-## Result
-- Cards actually appear with smooth scroll-reveal animation
-- Clean, professional testimonial layout on all screen sizes
-- No empty box — cards are visible as soon as scrolled into view
+## 2. Core Values: Horizontal Scroll on Mobile
+
+Currently 4 value cards stack into a 2x2 grid on mobile, taking up a lot of vertical space.
+
+**Change:**
+- On screens below 576px, switch to a horizontal scrollable row
+- Each value card becomes a compact fixed-width card (250px)
+- Users swipe left/right to see all 4 values
+- Add a subtle scroll hint gradient on the right edge
+- On tablet and desktop, keep the current grid layout unchanged
+
+**CSS additions:**
+- `@media (max-width: 575.98px)` rules for `.values-scroll` container with `overflow-x: auto`, `flex-wrap: nowrap`
+- Each `.value-card` gets `min-width: 250px` on mobile
+
+---
+
+## 3. Leadership: Compact Mobile Layout
+
+Currently leadership photos are 200x200px circles stacked vertically on mobile -- very tall.
+
+**Changes on mobile (below 576px):**
+- Reduce photo size from 200px to 120px
+- Switch from single-column stack to a 2-column grid (`col-6`) on mobile
+- Reduce spacing between cards
+- On tablet and desktop, keep the current layout unchanged
+
+**CSS additions:**
+- `@media (max-width: 575.98px)` rules for smaller photos and tighter spacing
+- Leadership cards get `col-6` on mobile for a 2-up grid
+
+---
+
+## Technical Summary
+
+| Section | Desktop | Tablet | Mobile |
+|---------|---------|--------|--------|
+| Testimonials | 3 visible in slider | 2 visible | 1 at a time, swipeable |
+| Core Values | 4-column grid | 2-column grid | Horizontal scroll row |
+| Leadership | 3-column grid | 2-column grid | 2-column grid, smaller photos |
+
+**File changed:** `php-backend/public/about.php` only
+
+- Add ~40 lines of CSS for slider, mobile scroll, and leadership sizing
+- Add ~30 lines of JS for slider auto-play and arrow/dot navigation
+- Modify the HTML structure of all three sections (testimonials wrapper, values row classes, leadership column classes)
 
