@@ -1265,6 +1265,11 @@ try {
                 <div class="nav-item">
                     <a href="/admin/quote-highlight.php" class="nav-link <?= navActive('/admin/quote-highlight') ?>" data-bs-title="Quote"><i class="bi bi-quote"></i> <span>Quote Highlight</span></a>
                 </div>
+                <?php if (isSuperAdmin() || getSetting('feature_testimonials', '1') === '1'): ?>
+                <div class="nav-item">
+                    <a href="/admin/testimonials.php" class="nav-link <?= navActive('/admin/testimonials') ?>" data-bs-title="Testimonials"><i class="bi bi-chat-quote"></i> <span>Testimonials</span></a>
+                </div>
+                <?php endif; ?>
                 <div class="nav-item">
                     <a href="/admin/school-location.php" class="nav-link <?= navActive('/admin/school-location') ?>" data-bs-title="Location"><i class="bi bi-geo-alt"></i> <span>School Location</span></a>
                 </div>

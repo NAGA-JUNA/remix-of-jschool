@@ -306,6 +306,56 @@ if ($leadershipShow === '1') {
 </section>
 <?php endif; ?>
 
+<?php
+// Testimonials Section
+$testimonials = [];
+try {
+    $testimonials = $db->query("SELECT * FROM testimonials WHERE is_approved=1 ORDER BY created_at DESC LIMIT 6")->fetchAll();
+} catch (Exception $e) {}
+?>
+<?php if (!empty($testimonials)): ?>
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-heading">What People Say</h2>
+            <p class="text-muted mt-3">Hear from our parents, students, and alumni</p>
+        </div>
+        <div class="row g-4">
+            <?php foreach ($testimonials as $t):
+                $tPhoto = $t['photo'] ? '/uploads/photos/' . $t['photo'] : '';
+                $initials = strtoupper(substr($t['name'], 0, 1));
+                $roleBadgeColors = ['Parent'=>'primary','Student'=>'success','Alumni'=>'info','Teacher'=>'warning','Other'=>'secondary'];
+                $rColor = $roleBadgeColors[$t['role']] ?? 'secondary';
+            ?>
+            <div class="col-lg-4 col-md-6">
+                <div class="card about-card shadow-sm h-100" style="opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease;">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <?php if ($tPhoto): ?>
+                            <img src="<?= e($tPhoto) ?>" alt="<?= e($t['name']) ?>" style="width:50px;height:50px;border-radius:50%;object-fit:cover;" loading="lazy">
+                            <?php else: ?>
+                            <div style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#1e40af,#3b82f6);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;"><?= $initials ?></div>
+                            <?php endif; ?>
+                            <div>
+                                <h6 class="fw-bold mb-0" style="font-size:.9rem;"><?= e($t['name']) ?></h6>
+                                <span class="badge bg-<?= $rColor ?>-subtle text-<?= $rColor ?>" style="font-size:.65rem;"><?= e($t['role']) ?></span>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <?php for ($s = 1; $s <= 5; $s++): ?>
+                            <i class="bi bi-star<?= $s <= $t['rating'] ? '-fill' : '' ?>" style="color:<?= $s <= $t['rating'] ? '#f59e0b' : '#d1d5db' ?>;font-size:.85rem;"></i>
+                            <?php endfor; ?>
+                        </div>
+                        <p class="text-muted mb-0" style="font-size:.88rem;line-height:1.7;">"<?= e(mb_strimwidth($t['message'], 0, 200, '...')) ?>"</p>
+                    </div>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
 <!-- Inspirational Quote Banner -->
 <?php if ($siteQuote): ?>
 <section class="py-5" style="background:#f1f5f9;">

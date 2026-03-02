@@ -283,7 +283,7 @@ if($action==='test_email'&&isSuperAdmin()){
 }
 
 if($action==='feature_access'&&isSuperAdmin()){
-  $features=['feature_admissions','feature_gallery','feature_events','feature_slider','feature_notifications','feature_reports','feature_audit_logs','feature_hr','feature_recruitment','feature_fee_structure','feature_certificates','feature_feature_cards','feature_core_team'];
+  $features=['feature_admissions','feature_gallery','feature_events','feature_slider','feature_notifications','feature_reports','feature_audit_logs','feature_hr','feature_recruitment','feature_fee_structure','feature_certificates','feature_feature_cards','feature_core_team','feature_testimonials'];
   foreach($features as $k){
     $v=isset($_POST[$k])?'1':'0';
     $db->prepare("INSERT INTO settings (setting_key,setting_value) VALUES (?,?) ON DUPLICATE KEY UPDATE setting_value=?")->execute([$k,$v,$v]);
@@ -1325,6 +1325,7 @@ require_once __DIR__.'/../includes/header.php';$s=$settings;?>
           'feature_certificates' => ['Certificates', 'bi-award-fill', 'Certificates & accreditations'],
           'feature_feature_cards' => ['Feature Cards', 'bi-grid-1x2-fill', 'Homepage feature cards'],
           'feature_core_team' => ['Core Team', 'bi-people-fill', 'Core team management'],
+          'feature_testimonials' => ['Testimonials', 'bi-chat-quote-fill', 'Parent & student testimonials'],
         ];
         foreach ($featureList as $key => [$label, $icon, $desc]):
           $checked = getSetting($key, '1') === '1';
