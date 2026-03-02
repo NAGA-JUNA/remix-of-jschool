@@ -328,7 +328,7 @@ if ($leadershipShow === '1') {
 ?>
 <?php if ($leadershipShow === '1' && !empty($leaders)): ?>
 <!-- Meet Our Leadership -->
-<section class="py-5" style="background:#f8f6f3;">
+<section id="leadershipSection" class="py-5" style="background:#f8f6f3;opacity:0;transform:translateY(30px);transition:opacity 0.8s ease,transform 0.8s ease;">
     <div class="container">
         <div class="text-center mb-5">
             <h2 style="font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:2.2rem;color:#1e293b;"><?= e($leadershipTitle) ?></h2>
@@ -465,7 +465,7 @@ const observer = new IntersectionObserver((entries) => {
         }
     });
 }, { threshold: 0.2 });
-document.querySelectorAll('.quote-banner').forEach(el => observer.observe(el));
+document.querySelectorAll('.quote-banner, #leadershipSection').forEach(el => observer.observe(el));
 
 // Testimonial Slider
 (function() {
