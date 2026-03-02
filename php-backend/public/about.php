@@ -112,10 +112,33 @@ if (isLoggedIn()) {
             transition: transform 0.3s, box-shadow 0.3s;
         }
         .value-card:hover { transform: translateY(-6px); box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
-        .value-icon {
-            width: 70px; height: 70px; border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 1rem;
+
+        /* Testimonial Slider */
+        .testimonial-slider {
+            display: flex; gap: 1.5rem; overflow-x: auto; scroll-snap-type: x mandatory;
+            scroll-behavior: smooth; -webkit-overflow-scrolling: touch; padding: 0.5rem 0 1.5rem;
         }
+        .testimonial-slider::-webkit-scrollbar { display: none; }
+        .testimonial-slider { -ms-overflow-style: none; scrollbar-width: none; }
+        .testimonial-slide {
+            scroll-snap-align: start; flex: 0 0 calc(33.333% - 1rem); min-width: 0;
+        }
+        @media (max-width: 991.98px) { .testimonial-slide { flex: 0 0 calc(50% - 0.75rem); } }
+        @media (max-width: 575.98px) { .testimonial-slide { flex: 0 0 100%; } }
+        .slider-nav { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 0.5rem; }
+        .slider-arrow {
+            width: 40px; height: 40px; border-radius: 50%; border: 2px solid #cbd5e1; background: #fff;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
+            color: #475569; font-size: 1.1rem;
+        }
+        .slider-arrow:hover { background: #1e40af; color: #fff; border-color: #1e40af; }
+        .slider-dots { display: flex; gap: 6px; align-items: center; }
+        .slider-dot {
+            width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1; border: none;
+            cursor: pointer; transition: all 0.3s; padding: 0;
+        }
+        .slider-dot.active { background: #1e40af; width: 24px; border-radius: 4px; }
+
         .section-heading {
             font-weight: 800; position: relative; display: inline-block; margin-bottom: 0.5rem;
         }
@@ -165,6 +188,17 @@ if (isLoggedIn()) {
             .footer-social { justify-content: center; }
             .site-footer { border-radius: 20px 20px 0 0; }
             .whatsapp-float { width: 50px; height: 50px; font-size: 1.5rem; bottom: 16px; right: 16px; }
+            /* Core Values: horizontal scroll on mobile */
+            .values-scroll { display: flex !important; flex-wrap: nowrap !important; overflow-x: auto; gap: 1rem; padding-bottom: 0.5rem; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+            .values-scroll::-webkit-scrollbar { display: none; }
+            .values-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+            .values-scroll > .value-col { flex: 0 0 250px !important; max-width: 250px !important; scroll-snap-align: start; }
+            /* Leadership: compact 2-col on mobile */
+            .leadership-grid .leader-col { flex: 0 0 50% !important; max-width: 50% !important; }
+            .leadership-grid .leader-col img,
+            .leadership-grid .leader-col .leader-placeholder { width: 120px !important; height: 120px !important; }
+            .leadership-grid .leader-col h5 { font-size: 0.9rem; }
+            .leadership-grid .leader-col p { font-size: 0.8rem !important; }
         }
     </style>
 </head>
@@ -245,9 +279,9 @@ if (isLoggedIn()) {
             <h2 class="section-heading">Our Core Values</h2>
             <p class="text-muted mt-3">The principles that guide everything we do</p>
         </div>
-        <div class="row g-4">
+        <div class="row g-4 values-scroll">
             <?php foreach ($coreValues as $cv): ?>
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-3 col-md-6 value-col">
                 <div class="card value-card shadow-sm h-100">
                     <div class="value-icon bg-<?= $cv['color'] ?>-subtle text-<?= $cv['color'] ?>"><i class="bi <?= $cv['icon'] ?>"></i></div>
                     <h5 class="fw-bold"><?= e($cv['title']) ?></h5>
@@ -281,16 +315,16 @@ if ($leadershipShow === '1') {
             <p style="font-style:italic;color:#64748b;max-width:600px;margin:1rem auto 0;font-size:1.05rem;line-height:1.7;">"<?= e($leadershipSubtitle) ?>"</p>
             <?php endif; ?>
         </div>
-        <div class="row g-4 justify-content-center">
+        <div class="row g-4 justify-content-center leadership-grid">
             <?php foreach ($leaders as $leader):
                 $leaderPhoto = $leader['photo'] ? ($leader['photo'] && strpos($leader['photo'], '/uploads/') === 0 ? $leader['photo'] : '/uploads/photos/' . $leader['photo']) : '';
             ?>
-            <div class="col-lg-4 col-md-6 col-12 text-center">
+            <div class="col-lg-4 col-md-6 col-6 text-center leader-col">
                 <div style="margin-bottom:1rem;">
                     <?php if ($leaderPhoto): ?>
                     <img src="<?= e($leaderPhoto) ?>" alt="<?= e($leader['name']) ?>" loading="lazy" style="width:200px;height:200px;border-radius:50%;object-fit:cover;border:4px solid rgba(220,180,180,0.4);margin:0 auto;">
                     <?php else: ?>
-                    <div style="width:200px;height:200px;border-radius:50%;background:#e2e8f0;display:flex;align-items:center;justify-content:center;margin:0 auto;border:4px solid rgba(220,180,180,0.4);">
+                    <div class="leader-placeholder" style="width:200px;height:200px;border-radius:50%;background:#e2e8f0;display:flex;align-items:center;justify-content:center;margin:0 auto;border:4px solid rgba(220,180,180,0.4);">
                         <i class="bi bi-person-fill" style="font-size:4rem;color:#94a3b8;"></i>
                     </div>
                     <?php endif; ?>
@@ -320,15 +354,15 @@ try {
             <h2 class="section-heading">What People Say</h2>
             <p class="text-muted mt-3">Hear from our parents, students, and alumni</p>
         </div>
-        <div class="row g-4">
-            <?php foreach ($testimonials as $t):
+        <div class="testimonial-slider" id="testimonialSlider">
+            <?php $slideIdx = 0; foreach ($testimonials as $t):
                 $tPhoto = $t['photo'] ? '/uploads/photos/' . $t['photo'] : '';
                 $initials = strtoupper(substr($t['name'], 0, 1));
                 $roleBadgeColors = ['Parent'=>'primary','Student'=>'success','Alumni'=>'info','Teacher'=>'warning','Other'=>'secondary'];
                 $rColor = $roleBadgeColors[$t['role']] ?? 'secondary';
             ?>
-            <div class="col-lg-4 col-md-6">
-                <div class="card about-card shadow-sm h-100 reveal-card" style="opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease;border-left:3px solid #3b82f6;position:relative;overflow:hidden;">
+            <div class="testimonial-slide">
+                <div class="card about-card shadow-sm h-100" style="border-left:3px solid #3b82f6;position:relative;overflow:hidden;">
                     <div style="position:absolute;top:10px;right:15px;font-size:2.5rem;color:rgba(59,130,246,0.08);font-family:Georgia,serif;line-height:1;">"</div>
                     <div class="card-body p-4">
                         <div class="d-flex align-items-center gap-3 mb-3">
@@ -351,7 +385,16 @@ try {
                     </div>
                 </div>
             </div>
-            <?php endforeach; ?>
+            <?php $slideIdx++; endforeach; ?>
+        </div>
+        <div class="slider-nav">
+            <button class="slider-arrow" id="sliderPrev" aria-label="Previous"><i class="bi bi-chevron-left"></i></button>
+            <div class="slider-dots" id="sliderDots">
+                <?php for ($d = 0; $d < count($testimonials); $d++): ?>
+                <button class="slider-dot<?= $d === 0 ? ' active' : '' ?>" data-index="<?= $d ?>" aria-label="Go to slide <?= $d+1 ?>"></button>
+                <?php endfor; ?>
+            </div>
+            <button class="slider-arrow" id="sliderNext" aria-label="Next"><i class="bi bi-chevron-right"></i></button>
         </div>
     </div>
 </section>
@@ -392,7 +435,49 @@ const observer = new IntersectionObserver((entries) => {
         }
     });
 }, { threshold: 0.2 });
-document.querySelectorAll('.quote-banner, .reveal-card').forEach(el => observer.observe(el));
+document.querySelectorAll('.quote-banner').forEach(el => observer.observe(el));
+
+// Testimonial Slider
+(function() {
+    const slider = document.getElementById('testimonialSlider');
+    if (!slider) return;
+    const slides = slider.querySelectorAll('.testimonial-slide');
+    const dots = document.querySelectorAll('#sliderDots .slider-dot');
+    const prevBtn = document.getElementById('sliderPrev');
+    const nextBtn = document.getElementById('sliderNext');
+    let autoPlay, paused = false;
+
+    function getSlideWidth() { return slides[0].offsetWidth + 24; } // 24 = gap 1.5rem
+    function getCurrentIndex() { return Math.round(slider.scrollLeft / getSlideWidth()); }
+
+    function updateDots() {
+        const idx = getCurrentIndex();
+        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    }
+
+    function scrollTo(idx) {
+        slider.scrollTo({ left: idx * getSlideWidth(), behavior: 'smooth' });
+    }
+
+    function next() {
+        const idx = getCurrentIndex();
+        scrollTo(idx >= slides.length - 1 ? 0 : idx + 1);
+    }
+
+    function startAutoPlay() { autoPlay = setInterval(() => { if (!paused) next(); }, 4000); }
+    function stopAutoPlay() { clearInterval(autoPlay); }
+
+    prevBtn.addEventListener('click', () => { const idx = getCurrentIndex(); scrollTo(idx <= 0 ? slides.length - 1 : idx - 1); });
+    nextBtn.addEventListener('click', () => next());
+    dots.forEach(d => d.addEventListener('click', () => scrollTo(parseInt(d.dataset.index))));
+    slider.addEventListener('scroll', updateDots);
+    slider.addEventListener('mouseenter', () => paused = true);
+    slider.addEventListener('mouseleave', () => paused = false);
+    slider.addEventListener('touchstart', () => paused = true, { passive: true });
+    slider.addEventListener('touchend', () => { setTimeout(() => paused = false, 3000); });
+
+    startAutoPlay();
+})();
 </script>
 </body>
 </html>
