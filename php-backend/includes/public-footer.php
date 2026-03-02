@@ -15,13 +15,20 @@ $_footerFacebook = getSetting('social_facebook', '#');
 $_footerTwitter  = getSetting('social_twitter', '#');
 $_footerInsta    = getSetting('social_instagram', '#');
 $_footerYoutube  = getSetting('social_youtube', '#');
+
+// Dynamic footer color settings
+$_clrFooterBg = getSetting('color_footer_bg', '#1a1a2e');
+$_clrFooterCtaBg = getSetting('color_footer_cta_bg', '#0f2557');
+$_clrFooterCtaEnd = getSetting('color_footer_cta_end', '#1a3a7a');
+$_clrBrandPri = getSetting('brand_primary', '#1e40af');
+$_clrBrandSec = getSetting('brand_secondary', '#6366f1');
 ?>
 
 <!-- Footer Styles -->
 <style>
 /* ── Footer CTA ── */
 .footer-cta {
-    background: linear-gradient(135deg, #0f2557 0%, #1a3a7a 100%);
+    background: linear-gradient(135deg, <?= e($_clrFooterCtaBg) ?> 0%, <?= e($_clrFooterCtaEnd) ?> 100%);
     padding: 3.5rem 0;
     text-align: center;
 }
@@ -56,7 +63,7 @@ $_footerYoutube  = getSetting('social_youtube', '#');
 
 /* ── Main Footer ── */
 .site-footer {
-    background: #1a1a2e;
+    background: <?= e($_clrFooterBg) ?>;
     color: rgba(255,255,255,0.7);
     padding: 3.5rem 0 0;
     font-size: 0.9rem;
@@ -102,7 +109,7 @@ $_footerYoutube  = getSetting('social_youtube', '#');
     position: absolute;
     bottom: 0; left: 0;
     width: 30px; height: 2px;
-    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    background: linear-gradient(90deg, <?= e($_clrBrandPri) ?>, <?= e($_clrBrandSec) ?>);
     border-radius: 2px;
 }
 
@@ -123,7 +130,7 @@ $_footerYoutube  = getSetting('social_youtube', '#');
     margin-bottom: 0.85rem; color: rgba(255,255,255,0.65);
 }
 .footer-contact-item i {
-    color: #60a5fa; font-size: 1rem; margin-top: 2px; flex-shrink: 0;
+    color: <?= e($_clrBrandPri) ?>; font-size: 1rem; margin-top: 2px; flex-shrink: 0;
 }
 
 /* Social */
@@ -135,7 +142,7 @@ $_footerYoutube  = getSetting('social_youtube', '#');
     color: rgba(255,255,255,0.7); font-size: 1rem;
     text-decoration: none; transition: all 0.3s;
 }
-.footer-social a:hover { background: #3b82f6; color: #fff; transform: translateY(-2px); }
+.footer-social a:hover { background: <?= e($_clrBrandPri) ?>; color: #fff; transform: translateY(-2px); }
 
 /* Bottom Bar */
 .footer-bottom {

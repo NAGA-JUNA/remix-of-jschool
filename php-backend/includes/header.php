@@ -11,6 +11,11 @@ $primaryColor = getSetting('primary_color', '#1e40af');
 $brandPrimary = getSetting('brand_primary', '#1e40af');
 $brandSecondary = getSetting('brand_secondary', '#6366f1');
 $brandAccent = getSetting('brand_accent', '#f59e0b');
+// Dynamic admin backend colors
+$_sidebarBg = getSetting('color_sidebar_bg', '#faf8f5');
+$_sidebarBgDark = getSetting('color_sidebar_bg_dark', '#1a1a1a');
+$_bodyBg = getSetting('color_body_bg', '#f4f2ee');
+$_bodyBgDark = getSetting('color_body_bg_dark', '#111111');
 $pageTitle = $pageTitle ?? 'Dashboard';
 $flash = getFlash();
 
@@ -92,7 +97,7 @@ try {
             --sidebar-margin: 12px;
 
             /* Light theme */
-            --bg-body: #f4f2ee;
+            --bg-body: <?= e($_bodyBg) ?>;
             --bg-card: #ffffff;
             --bg-topbar: #ffffff;
             --text-primary: #1a1a1a;
@@ -103,7 +108,7 @@ try {
             --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
 
             /* Sidebar – Light */
-            --sidebar-bg: #faf8f5;
+            --sidebar-bg: <?= e($_sidebarBg) ?>;
             --sidebar-text: #1a1a1a;
             --sidebar-text-muted: #9ca3af;
             --sidebar-hover: rgba(0,0,0,0.04);
@@ -120,7 +125,7 @@ try {
             --brand-primary-light: <?= e($brandPrimary) ?>33;
             --brand-secondary-light: <?= e($brandSecondary) ?>33;
             --brand-accent-light: <?= e($brandAccent) ?>33;
-            --bg-body: #111111;
+            --bg-body: <?= e($_bodyBgDark) ?>;
             --bg-card: #1c1c1c;
             --bg-topbar: #1c1c1c;
             --text-primary: #e5e5e5;
@@ -131,7 +136,7 @@ try {
             --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
 
             /* Sidebar – Dark */
-            --sidebar-bg: #1a1a1a;
+            --sidebar-bg: <?= e($_sidebarBgDark) ?>;
             --sidebar-text: #e5e5e5;
             --sidebar-text-muted: #6b7280;
             --sidebar-hover: rgba(255,255,255,0.05);
