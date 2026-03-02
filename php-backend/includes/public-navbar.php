@@ -468,19 +468,13 @@ function _navHasActiveChild($children, $currentPage) {
                    <?= ($item['link_type'] ?? '') === 'external' ? 'target="_blank" rel="noopener"' : '' ?>>
                     <i class="bi <?= e($item['icon'] ?? 'bi-circle') ?>"></i>
                     <?= e($item['label']) ?>
+                    <?php if ($item['url'] === '/public/notifications.php' && $notifCount > 0): ?>
+                        <span class="badge bg-danger rounded-pill ms-auto"><?= $notifCount > 9 ? '9+' : $notifCount ?></span>
+                    <?php endif; ?>
                 </a>
             <?php endif; ?>
         <?php endforeach; ?>
 
-        <?php if ($_navShowBell === '1'): ?>
-        <a class="pn-drawer-link" href="/public/notifications.php">
-            <i class="bi bi-bell-fill"></i>
-            Notifications
-            <?php if ($notifCount > 0): ?>
-                <span class="badge bg-danger rounded-pill ms-auto"><?= $notifCount > 9 ? '9+' : $notifCount ?></span>
-            <?php endif; ?>
-        </a>
-        <?php endif; ?>
 
         <?php if ($_navShowLogin === '1'): ?>
         <a class="pn-drawer-link" href="/login.php">
