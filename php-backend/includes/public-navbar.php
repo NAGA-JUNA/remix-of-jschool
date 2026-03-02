@@ -14,6 +14,13 @@ $_navShowBell = getSetting('global_navbar_show_notif_bell', '1');
 $_navSchoolTagline = $schoolTagline ?? getSetting('school_tagline', 'Nurturing Talent, Shaping Future');
 $_navMarquee = getSetting('home_marquee_text', '');
 
+// Dynamic color settings
+$_clrNavbarBg = getSetting('color_navbar_bg', '#0f172a');
+$_clrNavbarText = getSetting('color_navbar_text', '#ffffff');
+$_clrTopbarBg = getSetting('color_topbar_bg', '#060a12');
+$_clrBrandPrimary = getSetting('brand_primary', '#1e40af');
+$_clrBrandSecondary = getSetting('brand_secondary', '#6366f1');
+
 // Ensure parent_id column exists (migration for existing installs)
 try {
     $db->exec("ALTER TABLE nav_menu_items ADD COLUMN parent_id INT DEFAULT NULL");
@@ -110,7 +117,7 @@ function _navHasActiveChild($children, $currentPage) {
 <!-- Premium Navbar Styles -->
 <style>
 /* ── Top Bar ── */
-.pn-top-bar { background: #060a12; color: #fff; padding: 0.35rem 0; font-size: 0.75rem; z-index: 1051; position: relative; }
+.pn-top-bar { background: <?= e($_clrTopbarBg) ?>; color: #fff; padding: 0.35rem 0; font-size: 0.75rem; z-index: 1051; position: relative; }
 .pn-top-bar a { color: rgba(255,255,255,0.75); text-decoration: none; transition: color 0.2s; }
 .pn-top-bar a:hover { color: #fff; }
 .pn-marquee { white-space: nowrap; overflow: hidden; }
@@ -120,7 +127,7 @@ function _navHasActiveChild($children, $currentPage) {
 /* ── Premium Navbar ── */
 .premium-navbar {
     position: sticky; top: 0; z-index: 1050;
-    background: rgba(15,23,42,0.92);
+    background: <?= e($_clrNavbarBg) ?>ee;
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(255,255,255,0.06);
     padding: 0.7rem 0;
@@ -128,7 +135,7 @@ function _navHasActiveChild($children, $currentPage) {
 }
 .premium-navbar.scrolled {
     padding: 0.35rem 0;
-    background: rgba(15,23,42,0.97);
+    background: <?= e($_clrNavbarBg) ?>f8;
     box-shadow: 0 4px 30px rgba(0,0,0,0.3);
 }
 /* Only hide navbar on scroll for desktop */
@@ -147,7 +154,7 @@ function _navHasActiveChild($children, $currentPage) {
 .pn-logo-wrap:hover img { opacity: 0.85; }
 .pn-logo-fallback {
     width: 42px; height: 42px; border-radius: 10px;
-    background: linear-gradient(135deg, #1e40af, #3b82f6);
+    background: linear-gradient(135deg, <?= e($_clrBrandPrimary) ?>, <?= e($_clrBrandSecondary) ?>);
     display: flex; align-items: center; justify-content: center;
     color: #fff; font-size: 1.3rem;
 }
@@ -155,13 +162,13 @@ function _navHasActiveChild($children, $currentPage) {
 /* Nav Links */
 .pn-nav { display: flex; align-items: center; gap: 0.25rem; list-style: none; margin: 0; padding: 0; }
 .pn-nav-link {
-    color: rgba(255,255,255,0.75); font-weight: 500; font-size: 0.88rem;
+    color: <?= e($_clrNavbarText) ?>cc; font-weight: 500; font-size: 0.88rem;
     padding: 0.5rem 0.85rem; text-decoration: none; position: relative;
     transition: color 0.2s; border-radius: 8px;
 }
 .pn-nav-link::after {
     content: ''; position: absolute; bottom: 2px; left: 50%; width: 0; height: 2px;
-    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    background: linear-gradient(90deg, <?= e($_clrBrandPrimary) ?>, <?= e($_clrBrandSecondary) ?>);
     transition: all 0.3s cubic-bezier(0.4,0,0.2,1); transform: translateX(-50%); border-radius: 2px;
 }
 .pn-nav-link:hover { color: #fff; }
@@ -179,7 +186,7 @@ function _navHasActiveChild($children, $currentPage) {
 .pn-dropdown-menu {
     position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(8px);
     min-width: 200px; padding: 8px 0;
-    background: rgba(15,23,42,0.95);
+    background: <?= e($_clrNavbarBg) ?>f2;
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 12px;
@@ -198,7 +205,7 @@ function _navHasActiveChild($children, $currentPage) {
     transition: all 0.15s;
 }
 .pn-dropdown-item:hover {
-    background: rgba(59,130,246,0.12); color: #fff;
+    background: <?= e($_clrBrandPrimary) ?>1f; color: #fff;
 }
 .pn-dropdown-item i { font-size: 0.95rem; width: 18px; text-align: center; opacity: 0.7; }
 .pn-dropdown-item:hover i { opacity: 1; color: #60a5fa; }

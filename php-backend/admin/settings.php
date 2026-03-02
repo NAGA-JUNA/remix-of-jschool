@@ -146,6 +146,46 @@ if($action==='brand_colors_manual'){
   }
 }
 
+// Page Colors (Public + Admin) manual override
+if($action==='page_colors_manual'){
+  if(!isSuperAdmin()){setFlash('error','Only Super Admin can change page colors.');
+  }else{
+    $colorKeys = [
+      'color_navbar_bg','color_navbar_text','color_topbar_bg',
+      'color_footer_bg','color_footer_cta_bg','color_footer_cta_end',
+      'color_sidebar_bg','color_sidebar_bg_dark','color_body_bg','color_body_bg_dark'
+    ];
+    $valid = true;
+    foreach($colorKeys as $ck){
+      $val = trim($_POST[$ck] ?? '');
+      if($val !== '' && !preg_match('/^#[0-9a-fA-F]{6}$/', $val)){
+        $valid = false; break;
+      }
+    }
+    if($valid){
+      foreach($colorKeys as $ck){
+        $val = trim($_POST[$ck] ?? '');
+        if($val !== ''){
+          $db->prepare("INSERT INTO settings (setting_key,setting_value) VALUES (?,?) ON DUPLICATE KEY UPDATE setting_value=?")->execute([$ck,$val,$val]);
+        }
+      }
+      auditLog('update_page_colors','settings');setFlash('success','Page colors updated successfully.');
+    }else setFlash('error','Invalid color format. Use #RRGGBB.');
+  }
+}
+
+// Reset page colors to defaults
+if($action==='reset_page_colors'){
+  if(!isSuperAdmin()){setFlash('error','Only Super Admin can reset page colors.');
+  }else{
+    $resetKeys = ['color_navbar_bg','color_navbar_text','color_topbar_bg','color_footer_bg','color_footer_cta_bg','color_footer_cta_end','color_sidebar_bg','color_sidebar_bg_dark','color_body_bg','color_body_bg_dark'];
+    foreach($resetKeys as $rk){
+      $db->prepare("DELETE FROM settings WHERE setting_key=?")->execute([$rk]);
+    }
+    auditLog('reset_page_colors','settings');setFlash('success','Page colors reset to defaults.');
+  }
+}
+
 if($action==='favicon_upload'){
   if(!isSuperAdmin()){setFlash('error','Only Super Admin can change the favicon.');
   }elseif(!empty($_FILES['school_favicon']['name'])&&$_FILES['school_favicon']['error']===UPLOAD_ERR_OK){
@@ -854,8 +894,171 @@ require_once __DIR__.'/../includes/header.php';$s=$settings;?>
               <span class="text-white-50" style="font-size:.75rem">Home</span>
               <span class="text-white-50" style="font-size:.75rem">About</span>
               <span class="text-white-50" style="font-size:.75rem">Contact</span>
+  </div>
+
+  <?php if(isSuperAdmin()):?>
+  <!-- Page Colors Section -->
+  <div class="row g-3 mt-2">
+    <div class="col-12">
+      <div class="card border-0 rounded-3">
+        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+          <h6 class="fw-semibold mb-0"><i class="bi bi-brush me-2"></i>Page Colors — Public Site & Admin Backend</h6>
+          <form method="POST" class="d-inline"><?=csrfField()?><input type="hidden" name="form_action" value="reset_page_colors">
+            <button class="btn btn-outline-secondary btn-sm" onclick="return confirm('Reset all page colors to defaults?')"><i class="bi bi-arrow-counterclockwise me-1"></i>Reset Defaults</button>
+          </form>
+        </div>
+        <div class="card-body">
+
+          <!-- Preset Schemes -->
+          <h6 class="fw-semibold mb-2" style="font-size:.85rem"><i class="bi bi-lightning me-1"></i>Quick Apply — Preset Schemes</h6>
+          <p class="text-muted mb-3" style="font-size:.8rem">Click a scheme to fill all color fields. Fine-tune individual colors, then save.</p>
+          <div class="d-flex flex-wrap gap-2 mb-4">
+            <?php
+            $schemes = [
+              ['Classic Navy','#0f172a','#ffffff','#060a12','#1a1a2e','#0f2557','#1a3a7a','#faf8f5','#1a1a1a','#f4f2ee','#111111'],
+              ['Ocean Blue','#1e3a5f','#ffffff','#0c2340','#0c2340','#1a4a7a','#2563eb','#f0f7ff','#1a2332','#f0f4f8','#0f1a24'],
+              ['Forest Green','#1a3c34','#ffffff','#0d2818','#0d2818','#14532d','#166534','#f0fdf4','#1a2e1a','#f0f8f0','#0f1a0f'],
+              ['Royal Purple','#2d1b69','#ffffff','#1a1040','#1a1040','#3b1f8e','#6d28d9','#faf5ff','#201530','#f5f0fa','#130f1a'],
+              ['Warm Earth','#3d2b1f','#ffffff','#2c1810','#2c1810','#5c3d2e','#92400e','#fef7ed','#2a1f18','#faf5f0','#1a1410'],
+              ['Minimal Light','#ffffff','#1a1a1a','#f8fafc','#f8fafc','#1e40af','#3b82f6','#ffffff','#1a1a1a','#f9fafb','#111111'],
+            ];
+            $schemeNames = ['Classic Navy','Ocean Blue','Forest Green','Royal Purple','Warm Earth','Minimal Light'];
+            $schemeColors = ['#0f172a','#1e3a5f','#1a3c34','#2d1b69','#3d2b1f','#ffffff'];
+            foreach($schemes as $i => $sc): ?>
+            <button type="button" class="btn p-0 border-2 rounded-3 d-flex flex-column align-items-center justify-content-center page-scheme-btn"
+              style="width:90px;height:60px;background:<?=$sc[1]?>;border:2px solid <?=$sc[4]?>;"
+              data-scheme='<?=json_encode($sc)?>'
+              title="<?=$schemeNames[$i]?>">
+              <div style="width:70px;height:20px;border-radius:4px;background:<?=$sc[1]?>;border:1px solid <?=$sc[4]?>;margin-bottom:2px;"></div>
+              <span style="font-size:.55rem;font-weight:600;color:<?=$sc[1]==='#ffffff'?'#333':'#fff'?>;text-shadow:0 1px 2px rgba(0,0,0,.4)"><?=$schemeNames[$i]?></span>
+            </button>
+            <?php endforeach; ?>
+          </div>
+
+          <form method="POST" id="pageColorsForm"><?=csrfField()?><input type="hidden" name="form_action" value="page_colors_manual">
+
+          <!-- Public Site Colors -->
+          <h6 class="fw-semibold mb-2 mt-3" style="font-size:.85rem"><i class="bi bi-globe me-1"></i>Public Site Colors</h6>
+          <div class="row g-3 mb-4">
+            <?php
+            $pubColors = [
+              ['color_navbar_bg','Navbar Background','#0f172a'],
+              ['color_navbar_text','Navbar Text','#ffffff'],
+              ['color_topbar_bg','Top Bar Background','#060a12'],
+              ['color_footer_bg','Footer Background','#1a1a2e'],
+              ['color_footer_cta_bg','Footer CTA Start','#0f2557'],
+              ['color_footer_cta_end','Footer CTA End','#1a3a7a'],
+            ];
+            foreach($pubColors as $pc): ?>
+            <div class="col-md-4 col-6">
+              <label class="form-label" style="font-size:.8rem"><?=$pc[1]?></label>
+              <div class="d-flex gap-2 align-items-center">
+                <input type="color" name="<?=$pc[0]?>" class="form-control form-control-color pc-picker" value="<?=e($s[$pc[0]]??$pc[2])?>" data-default="<?=$pc[2]?>" style="width:48px;height:38px;">
+                <input type="text" class="form-control form-control-sm pc-hex" value="<?=e($s[$pc[0]]??$pc[2])?>" readonly style="font-size:.75rem;font-family:monospace;">
+              </div>
+            </div>
+            <?php endforeach; ?>
+          </div>
+
+          <!-- Admin Backend Colors -->
+          <h6 class="fw-semibold mb-2" style="font-size:.85rem"><i class="bi bi-gear me-1"></i>Admin Backend Colors</h6>
+          <div class="row g-3 mb-4">
+            <?php
+            $adminColors = [
+              ['color_sidebar_bg','Sidebar BG (Light)','#faf8f5'],
+              ['color_sidebar_bg_dark','Sidebar BG (Dark)','#1a1a1a'],
+              ['color_body_bg','Body BG (Light)','#f4f2ee'],
+              ['color_body_bg_dark','Body BG (Dark)','#111111'],
+            ];
+            foreach($adminColors as $ac): ?>
+            <div class="col-md-3 col-6">
+              <label class="form-label" style="font-size:.8rem"><?=$ac[1]?></label>
+              <div class="d-flex gap-2 align-items-center">
+                <input type="color" name="<?=$ac[0]?>" class="form-control form-control-color pc-picker" value="<?=e($s[$ac[0]]??$ac[2])?>" data-default="<?=$ac[2]?>" style="width:48px;height:38px;">
+                <input type="text" class="form-control form-control-sm pc-hex" value="<?=e($s[$ac[0]]??$ac[2])?>" readonly style="font-size:.75rem;font-family:monospace;">
+              </div>
+            </div>
+            <?php endforeach; ?>
+          </div>
+
+          <!-- Live Mini Preview -->
+          <h6 class="fw-semibold mb-2" style="font-size:.85rem"><i class="bi bi-eye me-1"></i>Live Preview</h6>
+          <div class="border rounded-3 overflow-hidden mb-3" id="pcPreview">
+            <div id="pcPrevTopbar" style="background:#060a12;padding:4px 12px;font-size:.65rem;color:rgba(255,255,255,0.7);">🎓 Welcome to School</div>
+            <div id="pcPrevNavbar" style="background:#0f172aee;padding:8px 12px;display:flex;align-items:center;gap:12px;">
+              <span style="color:#fff;font-weight:600;font-size:.8rem">School</span>
+              <span id="pcPrevNavText" style="color:rgba(255,255,255,0.75);font-size:.75rem">Home</span>
+              <span id="pcPrevNavText2" style="color:rgba(255,255,255,0.75);font-size:.75rem">About</span>
+            </div>
+            <div style="background:#fff;padding:12px;font-size:.75rem;color:#666;">Page content area...</div>
+            <div id="pcPrevFooterCta" style="background:linear-gradient(135deg,#0f2557,#1a3a7a);padding:10px 12px;text-align:center;">
+              <span style="color:#fff;font-size:.75rem;font-weight:600;">Join Our School</span>
+            </div>
+            <div id="pcPrevFooter" style="background:#1a1a2e;padding:10px 12px;display:flex;justify-content:space-between;">
+              <span style="color:rgba(255,255,255,0.6);font-size:.7rem">© 2025 School</span>
+              <span style="color:rgba(255,255,255,0.4);font-size:.7rem">Contact Info</span>
             </div>
           </div>
+          <div class="d-flex gap-2 mb-2" id="pcPrevAdmin">
+            <div id="pcPrevSidebar" style="width:80px;height:60px;border-radius:8px;background:#faf8f5;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#999;">Sidebar</div>
+            <div id="pcPrevBody" style="flex:1;height:60px;border-radius:8px;background:#f4f2ee;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#999;">Body</div>
+          </div>
+
+          <button class="btn btn-primary btn-sm"><i class="bi bi-check-lg me-1"></i>Save Page Colors</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // Sync color pickers with hex fields and live preview
+  document.querySelectorAll('.pc-picker').forEach(function(p){
+    p.addEventListener('input', function(){
+      this.closest('.d-flex').querySelector('.pc-hex').value = this.value;
+      updatePcPreview();
+    });
+  });
+
+  function getPcVal(name){ return document.querySelector('input[name="'+name+'"]').value; }
+
+  function updatePcPreview(){
+    var topbar = document.getElementById('pcPrevTopbar');
+    var navbar = document.getElementById('pcPrevNavbar');
+    var navText = document.getElementById('pcPrevNavText');
+    var navText2 = document.getElementById('pcPrevNavText2');
+    var footerCta = document.getElementById('pcPrevFooterCta');
+    var footer = document.getElementById('pcPrevFooter');
+    var sidebar = document.getElementById('pcPrevSidebar');
+    var body = document.getElementById('pcPrevBody');
+    topbar.style.background = getPcVal('color_topbar_bg');
+    navbar.style.background = getPcVal('color_navbar_bg') + 'ee';
+    var ntc = getPcVal('color_navbar_text');
+    navText.style.color = ntc + 'cc';
+    navText2.style.color = ntc + 'cc';
+    footerCta.style.background = 'linear-gradient(135deg,' + getPcVal('color_footer_cta_bg') + ',' + getPcVal('color_footer_cta_end') + ')';
+    footer.style.background = getPcVal('color_footer_bg');
+    sidebar.style.background = getPcVal('color_sidebar_bg');
+    body.style.background = getPcVal('color_body_bg');
+  }
+
+  // Preset scheme click handler
+  document.querySelectorAll('.page-scheme-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var sc = JSON.parse(this.dataset.scheme);
+      var keys = ['color_navbar_bg','color_navbar_text','color_topbar_bg','color_footer_bg','color_footer_cta_bg','color_footer_cta_end','color_sidebar_bg','color_sidebar_bg_dark','color_body_bg','color_body_bg_dark'];
+      keys.forEach(function(k, i){
+        var inp = document.querySelector('input[name="'+k+'"]');
+        if(inp){ inp.value = sc[i+1]; inp.closest('.d-flex').querySelector('.pc-hex').value = sc[i+1]; }
+      });
+      updatePcPreview();
+    });
+  });
+
+  updatePcPreview();
+  </script>
+  <?php endif;?>
+</div>
 
           <!-- Preview Body -->
           <div class="p-3 bg-white">
