@@ -328,11 +328,12 @@ try {
                 $rColor = $roleBadgeColors[$t['role']] ?? 'secondary';
             ?>
             <div class="col-lg-4 col-md-6">
-                <div class="card about-card shadow-sm h-100" style="opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease;">
+                <div class="card about-card shadow-sm h-100 reveal-card" style="opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease;border-left:3px solid #3b82f6;position:relative;overflow:hidden;">
+                    <div style="position:absolute;top:10px;right:15px;font-size:2.5rem;color:rgba(59,130,246,0.08);font-family:Georgia,serif;line-height:1;">"</div>
                     <div class="card-body p-4">
                         <div class="d-flex align-items-center gap-3 mb-3">
                             <?php if ($tPhoto): ?>
-                            <img src="<?= e($tPhoto) ?>" alt="<?= e($t['name']) ?>" style="width:50px;height:50px;border-radius:50%;object-fit:cover;" loading="lazy">
+                            <img src="<?= e($tPhoto) ?>" alt="<?= e($t['name']) ?>" style="width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid #e2e8f0;" loading="lazy">
                             <?php else: ?>
                             <div style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#1e40af,#3b82f6);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;"><?= $initials ?></div>
                             <?php endif; ?>
@@ -346,7 +347,7 @@ try {
                             <i class="bi bi-star<?= $s <= $t['rating'] ? '-fill' : '' ?>" style="color:<?= $s <= $t['rating'] ? '#f59e0b' : '#d1d5db' ?>;font-size:.85rem;"></i>
                             <?php endfor; ?>
                         </div>
-                        <p class="text-muted mb-0" style="font-size:.88rem;line-height:1.7;">"<?= e(mb_strimwidth($t['message'], 0, 200, '...')) ?>"</p>
+                        <p class="text-muted mb-0" style="font-size:.88rem;line-height:1.7;font-style:italic;">"<?= e(mb_strimwidth($t['message'], 0, 200, '...')) ?>"</p>
                     </div>
                 </div>
             </div>
@@ -391,7 +392,7 @@ const observer = new IntersectionObserver((entries) => {
         }
     });
 }, { threshold: 0.2 });
-document.querySelectorAll('.quote-banner').forEach(el => observer.observe(el));
+document.querySelectorAll('.quote-banner, .reveal-card').forEach(el => observer.observe(el));
 </script>
 </body>
 </html>
