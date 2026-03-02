@@ -896,6 +896,30 @@ require_once __DIR__.'/../includes/header.php';$s=$settings;?>
               <span class="text-white-50" style="font-size:.75rem">Contact</span>
             </div>
           </div>
+          <!-- Preview Body -->
+          <div class="p-3 bg-white">
+            <h6 class="preview-heading fw-bold mb-2" style="font-size:.9rem;color:<?=e($s['primary_color']??'#1e40af')?>">Welcome to Our School</h6>
+            <p class="text-muted mb-3" style="font-size:.75rem">This is a sample paragraph to show how body text looks alongside the theme color elements.</p>
+            <div class="d-flex gap-2 mb-3">
+              <button class="btn btn-sm preview-btn text-white" style="background:<?=e($s['primary_color']??'#1e40af')?>;border:none;font-size:.75rem">Primary Button</button>
+              <button class="btn btn-sm btn-outline-primary preview-btn-outline" style="color:<?=e($s['primary_color']??'#1e40af')?>;border-color:<?=e($s['primary_color']??'#1e40af')?>;font-size:.75rem">Outline Button</button>
+            </div>
+            <div class="d-flex gap-3" style="font-size:.75rem">
+              <a href="#" class="preview-link text-decoration-none" style="color:<?=e($s['primary_color']??'#1e40af')?>"><i class="bi bi-link-45deg me-1"></i>Sample Link</a>
+              <a href="#" class="preview-link text-decoration-none" style="color:<?=e($s['primary_color']??'#1e40af')?>"><i class="bi bi-arrow-right me-1"></i>Learn More</a>
+            </div>
+          </div>
+          <!-- Preview Footer -->
+          <div class="preview-footer px-3 py-2" style="background:<?=e($s['primary_color']??'#1e40af')?>22">
+            <div class="d-flex justify-content-between align-items-center">
+              <span style="font-size:.7rem;color:<?=e($s['primary_color']??'#1e40af')?>">© 2025 <?=e($s['school_short_name']??'School')?></span>
+              <div class="d-flex gap-2">
+                <i class="bi bi-facebook preview-social-icon" style="font-size:.75rem;color:<?=e($s['primary_color']??'#1e40af')?>"></i>
+                <i class="bi bi-instagram preview-social-icon" style="font-size:.75rem;color:<?=e($s['primary_color']??'#1e40af')?>"></i>
+                <i class="bi bi-youtube preview-social-icon" style="font-size:.75rem;color:<?=e($s['primary_color']??'#1e40af')?>"></i>
+              </div>
+            </div>
+          </div>
         </div>
       </div></div>
     </div>
@@ -1063,37 +1087,6 @@ require_once __DIR__.'/../includes/header.php';$s=$settings;?>
   updatePcPreview();
   </script>
   <?php endif;?>
-</div>
-
-          <!-- Preview Body -->
-          <div class="p-3 bg-white">
-            <h6 class="preview-heading fw-bold mb-2" style="font-size:.9rem;color:<?=e($s['primary_color']??'#1e40af')?>">Welcome to Our School</h6>
-            <p class="text-muted mb-3" style="font-size:.75rem">This is a sample paragraph to show how body text looks alongside the theme color elements.</p>
-            <div class="d-flex gap-2 mb-3">
-              <button class="btn btn-sm preview-btn text-white" style="background:<?=e($s['primary_color']??'#1e40af')?>;border:none;font-size:.75rem">Primary Button</button>
-              <button class="btn btn-sm btn-outline-primary preview-btn-outline" style="color:<?=e($s['primary_color']??'#1e40af')?>;border-color:<?=e($s['primary_color']??'#1e40af')?>;font-size:.75rem">Outline Button</button>
-            </div>
-            <div class="d-flex gap-3" style="font-size:.75rem">
-              <a href="#" class="preview-link text-decoration-none" style="color:<?=e($s['primary_color']??'#1e40af')?>"><i class="bi bi-link-45deg me-1"></i>Sample Link</a>
-              <a href="#" class="preview-link text-decoration-none" style="color:<?=e($s['primary_color']??'#1e40af')?>"><i class="bi bi-arrow-right me-1"></i>Learn More</a>
-            </div>
-          </div>
-
-          <!-- Preview Footer -->
-          <div class="preview-footer px-3 py-2" style="background:<?=e($s['primary_color']??'#1e40af')?>22">
-            <div class="d-flex justify-content-between align-items-center">
-              <span style="font-size:.7rem;color:<?=e($s['primary_color']??'#1e40af')?>">© 2025 <?=e($s['school_short_name']??'School')?></span>
-              <div class="d-flex gap-2">
-                <i class="bi bi-facebook preview-social-icon" style="font-size:.75rem;color:<?=e($s['primary_color']??'#1e40af')?>"></i>
-                <i class="bi bi-instagram preview-social-icon" style="font-size:.75rem;color:<?=e($s['primary_color']??'#1e40af')?>"></i>
-                <i class="bi bi-youtube preview-social-icon" style="font-size:.75rem;color:<?=e($s['primary_color']??'#1e40af')?>"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div></div>
-    </div>
-  </div>
 </div>
 
 <!-- ========== CONTENT TAB ========== -->
