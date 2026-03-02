@@ -1,51 +1,47 @@
 
+# Fix: Settings Tabs Broken by Extra Closing Tag
 
-# Fix: Public Footer Color Section Not Visible in Settings
+## Problem
+The previous div-fix added **one extra `</div>`** at line 903 of `settings.php`. This prematurely closes the `<div class="tab-pane" id="tab-appearance">` (opened at line 839), causing:
+- The Page Colors section to render outside any tab
+- All subsequent tabs (Content, Social & SMS, Email, Users, Access Control, System) to also fall outside the tab system
+- Everything shows at once instead of switching properly
 
-## Root Cause
+## Nesting Analysis (lines 897-903)
 
-In `php-backend/admin/settings.php`, the "Live Preview" card (Theme Color section) has broken HTML. At line 897, only one `</div>` closes the `ms-auto` div, but several other elements remain unclosed:
-
+```text
+Line 897: </div>       -- closes .ms-auto         (correct)
+Line 898: </div>       -- closes .preview-navbar   (correct)
+Line 899: </div>       -- closes #colorPreview     (correct)
+Line 900: </div></div> -- closes .card-body + .card (correct)
+Line 901: </div>       -- closes .col-lg-6         (correct)
+Line 902: </div>       -- closes .row.g-3          (correct)
+Line 903: </div>       -- closes #tab-appearance   (WRONG - extra!)
 ```
-Line 888: <div id="colorPreview">         -- NOT CLOSED
-Line 890: <div class="preview-navbar">     -- NOT CLOSED  
-Line 885: <div class="card-body">          -- NOT CLOSED
-Line 885: <div class="card">               -- NOT CLOSED
-Line 884: <div class="col-lg-6">           -- NOT CLOSED
-Line 840: <div class="row g-3">            -- NOT CLOSED
-```
 
-Because these divs are never closed, the **Page Colors section** (line 899+) — which contains all the Public Site footer color pickers — gets nested inside the broken preview card. The browser tries to fix the nesting but the section becomes invisible or misplaced.
+The Appearance tab is properly closed later at line 1098, after the Page Colors section ends.
 
 ## Fix
 
-**File: `php-backend/admin/settings.php` (line 897)**
+**File: `php-backend/admin/settings.php`**
 
-Replace the single `</div>` at line 897 with the proper closing sequence:
+Remove the single extra `</div>` at line 903. That's it -- one line deletion.
 
+Before:
 ```php
-            </div>
-          </div>
-        </div>
-      </div></div>
-    </div>
   </div>
 </div>
+</div>          <-- remove this line (903)
+
+  <?php if(isSuperAdmin()):?>
 ```
 
-This properly closes (in order):
-1. `.ms-auto` div
-2. `.preview-navbar` div
-3. `#colorPreview` div
-4. `.card-body` + `.card` divs
-5. `.col-lg-6` div
-6. `.row.g-3` div (the Appearance tab's row)
+After:
+```php
+  </div>
+</div>
 
-After this fix, the Page Colors section with its 6 Public Site color pickers (Navbar BG, Navbar Text, Top Bar BG, **Footer Background**, **Footer CTA Start**, **Footer CTA End**) and 4 Admin Backend pickers will render correctly as a separate card below the Theme Color section.
+  <?php if(isSuperAdmin()):?>
+```
 
-## Files Changed
-
-| File | Change |
-|---|---|
-| `php-backend/admin/settings.php` | Fix missing closing `</div>` tags at line 897 to properly close the Live Preview card before the Page Colors section |
-
+This keeps the Page Colors section inside the Appearance tab where it belongs, and all subsequent tabs will be properly nested again.
