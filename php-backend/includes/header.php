@@ -1418,6 +1418,7 @@ try {
                         <span style="font-size:0.7rem;color:var(--text-muted);"><?= $_totalBadge ?> pending</span>
                     </div>
                     <?php if ($_notifCount > 0): ?>
+                    <a href="/admin/notifications.php" style="text-decoration:none;color:inherit;">
                     <div class="notif-item">
                         <div class="notif-icon" style="background:rgba(59,130,246,0.1);color:#3b82f6;"><i class="bi bi-megaphone"></i></div>
                         <div class="notif-text">
@@ -1425,8 +1426,10 @@ try {
                             <small>Requires approval</small>
                         </div>
                     </div>
+                    </a>
                     <?php endif; ?>
                     <?php if ($_admissionCount > 0): ?>
+                    <a href="/admin/admissions.php" style="text-decoration:none;color:inherit;">
                     <div class="notif-item">
                         <div class="notif-icon" style="background:rgba(16,185,129,0.1);color:#10b981;"><i class="bi bi-person-badge"></i></div>
                         <div class="notif-text">
@@ -1434,15 +1437,18 @@ try {
                             <small>New applications received</small>
                         </div>
                     </div>
+                    </a>
                     <?php endif; ?>
                     <?php if ($_recruitmentCount > 0): ?>
+                    <a href="/admin/teacher-applications.php" style="text-decoration:none;color:inherit;">
                     <div class="notif-item">
                         <div class="notif-icon" style="background:rgba(139,92,246,0.1);color:#8b5cf6;"><i class="bi bi-briefcase"></i></div>
                         <div class="notif-text">
                             <p><?= $_recruitmentCount ?> new teacher application<?= $_recruitmentCount>1?'s':'' ?></p>
-                            <small><a href="/admin/teacher-applications.php" style="text-decoration:none;">Review now</a></small>
+                            <small>Review now</small>
                         </div>
                     </div>
+                    </a>
                     <?php endif; ?>
                     <?php if ($_totalBadge == 0): ?>
                     <div class="notif-item" style="justify-content:center;padding:1.5rem;">
