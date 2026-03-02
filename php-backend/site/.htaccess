@@ -1,0 +1,69 @@
+# ============================================
+# .htaccess Security & Performance Configuration
+# JNV School - Updated 2026-02-21
+# ============================================
+
+# ---------- 1. Rewrite Engine + HTTPS Redirect ----------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Force HTTPS
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+    # ---------- 2. Block Sensitive Directories ----------
+    RewriteRule ^config/ - [F,L]
+    RewriteRule ^includes/ - [F,L]
+
+    # ---------- 3. Block Sensitive File Types ----------
+    RewriteRule \.sql$ - [F,L]
+    RewriteRule \.env$ - [F,L]
+    RewriteRule \.git - [F,L]
+    RewriteRule \.log$ - [F,L]
+    RewriteRule \.bak$ - [F,L]
+    RewriteRule \.ini$ - [F,L]
+</IfModule>
+
+# ---------- 4. Block Directory Listing ----------
+Options -Indexes
+
+# ---------- 5. Protect .htaccess ----------
+<Files .htaccess>
+    Require all denied
+</Files>
+
+# ---------- 6. Block PHP Execution in Uploads ----------
+<IfModule mod_rewrite.c>
+    RewriteRule ^uploads/.*\.ph(p[0-9]?|tml)$ - [F,L]
+</IfModule>
+<FilesMatch "^uploads/.*\.ph(p[0-9]?|tml)$">
+    Require all denied
+</FilesMatch>
+
+# ---------- 7. HTTP Security Headers ----------
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    Header set Content-Security-Policy "default-src 'self'; frame-src 'self' https://www.google.com https://maps.google.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'self';"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
+</IfModule>
+
+# ---------- 8. Upload Size Limit (10MB) ----------
+LimitRequestBody 10485760
+
+# ---------- 9. Static Asset Caching ----------
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    ExpiresByType application/x-font-woff "access plus 1 month"
+    ExpiresByType font/woff2 "access plus 1 month"
+</IfModule>

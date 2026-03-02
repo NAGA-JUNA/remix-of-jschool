@@ -1,0 +1,13 @@
+<?php
+$pageTitle='Reports';require_once __DIR__.'/../includes/auth.php';requireAdmin();$db=getDB();
+if(isset($_GET['export'])){$type=$_GET['export'];header('Content-Type: text/csv');header('Content-Disposition: attachment; filename="'.$type.'_'.date('Y-m-d').'.csv"');$out=fopen('php://output','w');
+switch($type){case 'students':fputcsv($out,['Adm No','Name','Father','Class','Section','Phone','Status','DOB']);$rows=$db->query("SELECT * FROM students ORDER BY class,name")->fetchAll();foreach($rows as $r)fputcsv($out,[$r['admission_no'],$r['name'],$r['father_name'],$r['class'],$r['section'],$r['phone'],$r['status'],$r['dob']]);break;
+case 'teachers':fputcsv($out,['Emp ID','Name','Subject','Phone','Status','Joining']);$rows=$db->query("SELECT * FROM teachers ORDER BY name")->fetchAll();foreach($rows as $r)fputcsv($out,[$r['employee_id'],$r['name'],$r['subject'],$r['phone'],$r['status'],$r['joining_date']]);break;
+case 'admissions':fputcsv($out,['ID','Student','Father','Class','Phone','Status','Date']);$rows=$db->query("SELECT * FROM admissions ORDER BY created_at DESC")->fetchAll();foreach($rows as $r)fputcsv($out,[$r['id'],$r['student_name'],$r['father_name'],$r['class_applied'],$r['phone'],$r['status'],$r['created_at']]);break;
+case 'attendance':fputcsv($out,['Student','Class','Date','Status']);$rows=$db->query("SELECT s.name,a.class,a.date,a.status FROM attendance a JOIN students s ON a.student_id=s.id ORDER BY a.date DESC LIMIT 1000")->fetchAll();foreach($rows as $r)fputcsv($out,[$r['name'],$r['class'],$r['date'],$r['status']]);break;}
+fclose($out);auditLog('export_'.$type,'report');exit;}
+require_once __DIR__.'/../includes/header.php';?>
+<div class="row g-3"><?php $reports=[['Students','bi-mortarboard-fill','primary','students','All student records'],['Teachers','bi-person-badge-fill','success','teachers','All teacher records'],['Admissions','bi-file-earmark-plus-fill','warning','admissions','All applications'],['Attendance','bi-check2-square','info','attendance','Attendance records']];foreach($reports as $r):?>
+<div class="col-md-6 col-lg-3"><div class="card border-0 rounded-3 h-100"><div class="card-body text-center"><div class="kpi-icon bg-<?=$r[2]?>-subtle text-<?=$r[2]?> mx-auto mb-3"><i class="bi <?=$r[1]?>"></i></div><h6 class="fw-semibold"><?=$r[0]?> Report</h6><p class="text-muted mb-3" style="font-size:.8rem"><?=$r[4]?></p><a href="/admin/reports.php?export=<?=$r[3]?>" class="btn btn-sm btn-outline-<?=$r[2]?>"><i class="bi bi-download me-1"></i>Download CSV</a></div></div></div>
+<?php endforeach;?></div>
+<?php require_once __DIR__.'/../includes/footer.php';?>
