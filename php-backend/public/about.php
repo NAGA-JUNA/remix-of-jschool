@@ -205,21 +205,17 @@ if (isLoggedIn()) {
             .values-scroll { display: flex !important; flex-direction: column !important; gap: 1rem !important; }
             .values-scroll > .value-col { flex: 0 0 auto !important; max-width: 100% !important; width: 100% !important; }
             .values-scroll .value-card {
-                display: flex !important; flex-direction: row !important; align-items: flex-start !important;
-                text-align: left !important; padding: 1rem 1.25rem !important; gap: 1rem;
+                display: flex !important; flex-direction: column !important; align-items: center !important;
+                text-align: center !important; padding: 1.5rem 1.25rem !important; gap: 0.5rem;
                 border-radius: 12px !important; box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
                 background: #fff !important; border: none !important;
             }
-            .values-scroll .value-card[data-accent="warning"] { border-left: 4px solid #f59e0b !important; }
-            .values-scroll .value-card[data-accent="danger"] { border-left: 4px solid #ef4444 !important; }
-            .values-scroll .value-card[data-accent="primary"] { border-left: 4px solid #3b82f6 !important; }
-            .values-scroll .value-card[data-accent="success"] { border-left: 4px solid #22c55e !important; }
             .values-scroll .value-card .value-icon {
-                margin: 0 !important; flex-shrink: 0; width: 48px !important; height: 48px !important;
-                font-size: 1.2rem !important; border-radius: 50% !important;
+                margin: 0 auto 0.5rem !important; flex-shrink: 0; width: 52px !important; height: 52px !important;
+                font-size: 1.3rem !important; border-radius: 50% !important;
             }
-            .values-scroll .value-card h5 { font-size: 0.95rem; margin-bottom: 0.2rem; }
-            .values-scroll .value-card p { font-size: 0.8rem !important; margin-bottom: 0 !important; line-height: 1.5 !important; }
+            .values-scroll .value-card h5 { font-size: 1rem; margin-bottom: 0.25rem; }
+            .values-scroll .value-card p { font-size: 0.82rem !important; margin-bottom: 0 !important; line-height: 1.6 !important; }
         }
     </style>
 </head>
