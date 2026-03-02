@@ -290,7 +290,7 @@ if (isLoggedIn()) {
 </section>
 
 <!-- Core Values -->
-<section class="py-5">
+<section id="coreValuesSection" class="py-5" style="opacity:0;transform:translateY(30px);transition:opacity 0.8s ease,transform 0.8s ease;">
     <div class="container">
         <div class="text-center mb-5">
             <h2 class="section-heading">Our Core Values</h2>
@@ -461,7 +461,7 @@ const observer = new IntersectionObserver((entries) => {
         }
     });
 }, { threshold: 0.2 });
-document.querySelectorAll('.quote-banner, #leadershipSection').forEach(el => observer.observe(el));
+document.querySelectorAll('.quote-banner, #leadershipSection, #coreValuesSection').forEach(el => observer.observe(el));
 
 // Testimonial Slider
 (function() {
