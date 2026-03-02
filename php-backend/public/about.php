@@ -139,6 +139,19 @@ if (isLoggedIn()) {
         }
         .slider-dot.active { background: #1e40af; width: 24px; border-radius: 4px; }
 
+        /* Leadership Slider */
+        .leadership-slider {
+            display: flex; gap: 1.5rem; overflow-x: auto; scroll-snap-type: x mandatory;
+            scroll-behavior: smooth; -webkit-overflow-scrolling: touch; padding: 0.5rem 0 1.5rem;
+        }
+        .leadership-slider::-webkit-scrollbar { display: none; }
+        .leadership-slider { -ms-overflow-style: none; scrollbar-width: none; }
+        .leadership-slide {
+            scroll-snap-align: start; flex: 0 0 calc(33.333% - 1rem); min-width: 0;
+        }
+        @media (max-width: 991.98px) { .leadership-slide { flex: 0 0 calc(50% - 0.75rem); } }
+        @media (max-width: 575.98px) { .leadership-slide { flex: 0 0 100%; } }
+
         .section-heading {
             font-weight: 800; position: relative; display: inline-block; margin-bottom: 0.5rem;
         }
@@ -188,17 +201,16 @@ if (isLoggedIn()) {
             .footer-social { justify-content: center; }
             .site-footer { border-radius: 20px 20px 0 0; }
             .whatsapp-float { width: 50px; height: 50px; font-size: 1.5rem; bottom: 16px; right: 16px; }
-            /* Core Values: horizontal scroll on mobile */
-            .values-scroll { display: flex !important; flex-wrap: nowrap !important; overflow-x: auto; gap: 1rem; padding-bottom: 0.5rem; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
-            .values-scroll::-webkit-scrollbar { display: none; }
-            .values-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-            .values-scroll > .value-col { flex: 0 0 250px !important; max-width: 250px !important; scroll-snap-align: start; }
-            /* Leadership: compact 2-col on mobile */
-            .leadership-grid .leader-col { flex: 0 0 50% !important; max-width: 50% !important; }
-            .leadership-grid .leader-col img,
-            .leadership-grid .leader-col .leader-placeholder { width: 120px !important; height: 120px !important; }
-            .leadership-grid .leader-col h5 { font-size: 0.9rem; }
-            .leadership-grid .leader-col p { font-size: 0.8rem !important; }
+            /* Core Values: compact flex rows on mobile */
+            .values-scroll { display: flex !important; flex-direction: column !important; gap: 0.75rem !important; }
+            .values-scroll > .value-col { flex: 0 0 auto !important; max-width: 100% !important; width: 100% !important; }
+            .values-scroll .value-card {
+                display: flex !important; flex-direction: row !important; align-items: flex-start !important;
+                text-align: left !important; padding: 1rem !important; gap: 0.75rem;
+            }
+            .values-scroll .value-card .value-icon { margin: 0 !important; flex-shrink: 0; width: 48px !important; height: 48px !important; font-size: 1.2rem !important; }
+            .values-scroll .value-card h5 { font-size: 0.95rem; margin-bottom: 0.15rem; }
+            .values-scroll .value-card p { font-size: 0.8rem !important; margin-bottom: 0 !important; }
         }
     </style>
 </head>
@@ -315,26 +327,35 @@ if ($leadershipShow === '1') {
             <p style="font-style:italic;color:#64748b;max-width:600px;margin:1rem auto 0;font-size:1.05rem;line-height:1.7;">"<?= e($leadershipSubtitle) ?>"</p>
             <?php endif; ?>
         </div>
-        <div class="row g-4 justify-content-center leadership-grid">
+        <div class="leadership-slider" id="leadershipSlider">
             <?php foreach ($leaders as $leader):
                 $leaderPhoto = $leader['photo'] ? ($leader['photo'] && strpos($leader['photo'], '/uploads/') === 0 ? $leader['photo'] : '/uploads/photos/' . $leader['photo']) : '';
             ?>
-            <div class="col-lg-4 col-md-6 col-6 text-center leader-col">
-                <div style="margin-bottom:1rem;">
+            <div class="leadership-slide">
+                <div class="text-center" style="padding:1rem;">
                     <?php if ($leaderPhoto): ?>
-                    <img src="<?= e($leaderPhoto) ?>" alt="<?= e($leader['name']) ?>" loading="lazy" style="width:200px;height:200px;border-radius:50%;object-fit:cover;border:4px solid rgba(220,180,180,0.4);margin:0 auto;">
+                    <img src="<?= e($leaderPhoto) ?>" alt="<?= e($leader['name']) ?>" loading="lazy" style="width:180px;height:180px;border-radius:50%;object-fit:cover;border:4px solid rgba(220,180,180,0.4);margin:0 auto 1rem;">
                     <?php else: ?>
-                    <div class="leader-placeholder" style="width:200px;height:200px;border-radius:50%;background:#e2e8f0;display:flex;align-items:center;justify-content:center;margin:0 auto;border:4px solid rgba(220,180,180,0.4);">
+                    <div style="width:180px;height:180px;border-radius:50%;background:#e2e8f0;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;border:4px solid rgba(220,180,180,0.4);">
                         <i class="bi bi-person-fill" style="font-size:4rem;color:#94a3b8;"></i>
                     </div>
                     <?php endif; ?>
+                    <h5 style="font-weight:700;color:#1e293b;margin-bottom:0.25rem;"><?= e($leader['name']) ?></h5>
+                    <?php if ($leader['designation']): ?>
+                    <p style="color:#dc2626;font-weight:600;font-size:0.95rem;margin-bottom:0;"><?= e($leader['designation']) ?></p>
+                    <?php endif; ?>
                 </div>
-                <h5 style="font-weight:700;color:#1e293b;margin-bottom:0.25rem;"><?= e($leader['name']) ?></h5>
-                <?php if ($leader['designation']): ?>
-                <p style="color:#dc2626;font-weight:600;font-size:0.95rem;margin-bottom:0;"><?= e($leader['designation']) ?></p>
-                <?php endif; ?>
             </div>
             <?php endforeach; ?>
+        </div>
+        <div class="slider-nav">
+            <button class="slider-arrow" id="leaderPrev" aria-label="Previous"><i class="bi bi-chevron-left"></i></button>
+            <div class="slider-dots" id="leaderDots">
+                <?php for ($d = 0; $d < count($leaders); $d++): ?>
+                <button class="slider-dot<?= $d === 0 ? ' active' : '' ?>" data-index="<?= $d ?>" aria-label="Go to leader <?= $d+1 ?>"></button>
+                <?php endfor; ?>
+            </div>
+            <button class="slider-arrow" id="leaderNext" aria-label="Next"><i class="bi bi-chevron-right"></i></button>
         </div>
     </div>
 </section>
@@ -466,6 +487,47 @@ document.querySelectorAll('.quote-banner').forEach(el => observer.observe(el));
 
     function startAutoPlay() { autoPlay = setInterval(() => { if (!paused) next(); }, 4000); }
     function stopAutoPlay() { clearInterval(autoPlay); }
+
+    prevBtn.addEventListener('click', () => { const idx = getCurrentIndex(); scrollTo(idx <= 0 ? slides.length - 1 : idx - 1); });
+    nextBtn.addEventListener('click', () => next());
+    dots.forEach(d => d.addEventListener('click', () => scrollTo(parseInt(d.dataset.index))));
+    slider.addEventListener('scroll', updateDots);
+    slider.addEventListener('mouseenter', () => paused = true);
+    slider.addEventListener('mouseleave', () => paused = false);
+    slider.addEventListener('touchstart', () => paused = true, { passive: true });
+    slider.addEventListener('touchend', () => { setTimeout(() => paused = false, 3000); });
+
+    startAutoPlay();
+})();
+
+// Leadership Slider
+(function() {
+    const slider = document.getElementById('leadershipSlider');
+    if (!slider) return;
+    const slides = slider.querySelectorAll('.leadership-slide');
+    const dots = document.querySelectorAll('#leaderDots .slider-dot');
+    const prevBtn = document.getElementById('leaderPrev');
+    const nextBtn = document.getElementById('leaderNext');
+    let autoPlay, paused = false;
+
+    function getSlideWidth() { return slides[0].offsetWidth + 24; }
+    function getCurrentIndex() { return Math.round(slider.scrollLeft / getSlideWidth()); }
+
+    function updateDots() {
+        const idx = getCurrentIndex();
+        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    }
+
+    function scrollTo(idx) {
+        slider.scrollTo({ left: idx * getSlideWidth(), behavior: 'smooth' });
+    }
+
+    function next() {
+        const idx = getCurrentIndex();
+        scrollTo(idx >= slides.length - 1 ? 0 : idx + 1);
+    }
+
+    function startAutoPlay() { autoPlay = setInterval(() => { if (!paused) next(); }, 5000); }
 
     prevBtn.addEventListener('click', () => { const idx = getCurrentIndex(); scrollTo(idx <= 0 ? slides.length - 1 : idx - 1); });
     nextBtn.addEventListener('click', () => next());
