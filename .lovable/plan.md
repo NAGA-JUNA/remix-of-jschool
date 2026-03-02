@@ -1,54 +1,34 @@
 
 
-# Fix Core Values Mobile View + Leadership Slider
+# Fix Core Values Mobile Layout
 
-## Changes (1 file: `php-backend/public/about.php`)
+## Problem
+The current mobile layout uses a flex-row (icon left, text right) approach that looks cramped and misaligned. The cards lack visual distinction and proper spacing.
 
-### 1. Core Values: Fix Mobile Layout
+## Solution
+Redesign the mobile Core Values cards to be cleaner, more polished single-column cards with:
 
-The current horizontal scroll approach isn't working well on mobile. Replace it with a cleaner vertical stack with smaller, more compact cards:
+**Card Design (mobile only, below 576px):**
+- Each card gets a colored left border (4px solid, matching value color: warning/danger/primary/success)
+- White background card with subtle shadow and rounded corners
+- Horizontal layout: icon on left (48px circle with colored background), title + description on the right
+- Title in bold, description in muted smaller text below
+- Comfortable padding (1rem 1.25rem) and gap between cards (1rem)
+- Remove the centered text/icon stacking -- keep the horizontal row but fix spacing
 
-- Remove the `values-scroll` horizontal scroll CSS on mobile
-- Instead, display as a clean single-column list with each card as a horizontal row (icon left, text right) rather than centered tall cards
-- Each card becomes a compact flex row: icon (48px) + title/description side by side
-- This reduces vertical space while looking polished on mobile
-- Desktop/tablet layout stays unchanged (4-column / 2-column grid)
+**Key CSS Changes (in `@media (max-width: 575.98px)` block):**
+- Add `border-left: 4px solid` to each `.value-card` with color inherited from the value's theme color
+- Fix icon alignment to vertically center with the title
+- Increase gap between icon and text content to 1rem
+- Set proper line-height on description text
+- Ensure card doesn't have excessive vertical padding
+- Add a subtle `border-radius: 12px` and `box-shadow: 0 2px 8px rgba(0,0,0,0.06)`
 
-**Mobile card layout:**
-```
-[icon]  Excellence
-        We strive for the highest standards...
-```
+**HTML Change:**
+- Add a `data-color` or inline border-left style to each value card so the left border matches its color (warning=amber, danger=red, primary=blue, success=green)
 
-### 2. Leadership: Convert to Slider (Same Pattern as Testimonials)
+## File Changed
+`php-backend/public/about.php` -- CSS rules in the mobile media query + minor HTML attribute additions for per-card border colors
 
-Replace the grid/compact layout with a full slider matching the Testimonials carousel:
-
-- Reuse the exact same slider CSS pattern (`.leadership-slider`, `.leadership-slide`)
-- Add prev/next arrows and dot indicators
-- Auto-play with 5-second interval, pause on hover/touch
-- Desktop: 3 leaders visible, Tablet: 2, Mobile: 1 at a time (swipeable)
-- Each slide shows the leader photo (circle), name, and designation centered
-- Add a second JS block for the leadership slider (independent from testimonials)
-
-**CSS additions:**
-- `.leadership-slider` -- same flex/scroll-snap rules as `.testimonial-slider`
-- `.leadership-slide` -- same responsive widths as `.testimonial-slide`
-- `.leader-slider-nav` -- arrows and dots (reuse `.slider-arrow` / `.slider-dot` styles)
-
-**JS additions (~25 lines):**
-- Duplicate the testimonial slider logic for `#leadershipSlider`
-- Independent auto-play timer, arrows, and dot sync
-
-**HTML changes:**
-- Wrap leader cards in `.leadership-slider` container instead of `.row`
-- Each leader becomes a `.leadership-slide` div
-- Add nav controls below the slider
-
-### Summary
-
-| Section | Desktop | Tablet | Mobile |
-|---------|---------|--------|--------|
-| Core Values | 4-column grid (unchanged) | 2-column grid (unchanged) | Compact horizontal rows (icon + text) |
-| Leadership | 3 visible in slider | 2 visible | 1 at a time, swipeable |
-
+## Result
+Clean, professional-looking value cards on mobile matching the design reference -- colored left accent, icon beside text, proper spacing.
