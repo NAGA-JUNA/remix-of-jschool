@@ -894,7 +894,13 @@ require_once __DIR__.'/../includes/header.php';$s=$settings;?>
               <span class="text-white-50" style="font-size:.75rem">Home</span>
               <span class="text-white-50" style="font-size:.75rem">About</span>
               <span class="text-white-50" style="font-size:.75rem">Contact</span>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
   </div>
+</div>
 
   <?php if(isSuperAdmin()):?>
   <!-- Page Colors Section -->
