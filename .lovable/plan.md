@@ -1,48 +1,27 @@
 
 
-# Fix: Duplicate "Notifications" in Mobile Menu
+# Fix: Remove Duplicate Logo and "Apply Now" in Mobile Drawer
 
-## Problem
-The mobile drawer shows "Notifications" twice:
-1. Once from the regular nav menu items loop (without badge)
-2. Once from a separate hardcoded bell notification link (with badge count)
+## Problems
+1. The school logo shows at the top of the mobile drawer, duplicating the main navbar logo visible behind it.
+2. The "Apply Now" CTA appears twice on mobile: once inside the drawer footer and once as a persistent fixed bottom bar.
 
-## Fix (1 file)
+## Changes (1 file: `php-backend/includes/public-navbar.php`)
 
-**File: `php-backend/includes/public-navbar.php`**
-
-### Edit 1: Add badge to the regular Notifications link in the drawer loop (lines 466-471)
-
-Update the drawer link rendering for regular (non-parent) items to detect when the item is "Notifications" and append the notification count badge:
+### Edit 1: Simplify drawer header — remove logo, show school name only
+Replace the logo image in the drawer header (lines 437-443) with just the school name text. This avoids the visual repetition while still branding the drawer.
 
 ```php
-<a class="pn-drawer-link ..." href="...">
-    <i class="bi ..."></i>
-    <?= e($item['label']) ?>
-    <?php if ($item['url'] === '/public/notifications.php' && $notifCount > 0): ?>
-        <span class="badge bg-danger rounded-pill ms-auto"><?= $notifCount > 9 ? '9+' : $notifCount ?></span>
-    <?php endif; ?>
-</a>
+<div class="pn-drawer-header">
+    <span class="text-white fw-bold"><?= e($schoolName) ?></span>
+    <button class="pn-drawer-close" ...>...</button>
+</div>
 ```
 
-### Edit 2: Remove the duplicate bell notification link (lines 475-483)
-
-Delete the entire block that adds a second "Notifications" link to the drawer:
-
-```php
-// REMOVE THIS:
-<?php if ($_navShowBell === '1'): ?>
-<a class="pn-drawer-link" href="/public/notifications.php">
-    <i class="bi bi-bell-fill"></i>
-    Notifications
-    <?php if ($notifCount > 0): ?>
-        <span class="badge bg-danger rounded-pill ms-auto">...</span>
-    <?php endif; ?>
-</a>
-<?php endif; ?>
-```
+### Edit 2: Remove CTA from inside the drawer (lines 485-489)
+Delete the drawer footer CTA block. The fixed bottom "Apply Now" bar (lines 492-497) already handles this on mobile, so having it inside the drawer is redundant.
 
 ## Result
-- Mobile menu shows "Notifications" only once
-- The single entry still displays the red badge with unread count
-- Desktop nav and bell icon modal are unaffected
+- Drawer shows a clean text header (school name) instead of a repeated logo
+- "Apply Now" appears only once as the fixed bottom bar, not duplicated inside the drawer
+- No impact on desktop layout
