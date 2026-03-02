@@ -201,16 +201,25 @@ if (isLoggedIn()) {
             .footer-social { justify-content: center; }
             .site-footer { border-radius: 20px 20px 0 0; }
             .whatsapp-float { width: 50px; height: 50px; font-size: 1.5rem; bottom: 16px; right: 16px; }
-            /* Core Values: compact flex rows on mobile */
-            .values-scroll { display: flex !important; flex-direction: column !important; gap: 0.75rem !important; }
+            /* Core Values: polished compact cards on mobile */
+            .values-scroll { display: flex !important; flex-direction: column !important; gap: 1rem !important; }
             .values-scroll > .value-col { flex: 0 0 auto !important; max-width: 100% !important; width: 100% !important; }
             .values-scroll .value-card {
                 display: flex !important; flex-direction: row !important; align-items: flex-start !important;
-                text-align: left !important; padding: 1rem !important; gap: 0.75rem;
+                text-align: left !important; padding: 1rem 1.25rem !important; gap: 1rem;
+                border-radius: 12px !important; box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+                background: #fff !important; border: none !important;
             }
-            .values-scroll .value-card .value-icon { margin: 0 !important; flex-shrink: 0; width: 48px !important; height: 48px !important; font-size: 1.2rem !important; }
-            .values-scroll .value-card h5 { font-size: 0.95rem; margin-bottom: 0.15rem; }
-            .values-scroll .value-card p { font-size: 0.8rem !important; margin-bottom: 0 !important; }
+            .values-scroll .value-card[data-accent="warning"] { border-left: 4px solid #f59e0b !important; }
+            .values-scroll .value-card[data-accent="danger"] { border-left: 4px solid #ef4444 !important; }
+            .values-scroll .value-card[data-accent="primary"] { border-left: 4px solid #3b82f6 !important; }
+            .values-scroll .value-card[data-accent="success"] { border-left: 4px solid #22c55e !important; }
+            .values-scroll .value-card .value-icon {
+                margin: 0 !important; flex-shrink: 0; width: 48px !important; height: 48px !important;
+                font-size: 1.2rem !important; border-radius: 50% !important;
+            }
+            .values-scroll .value-card h5 { font-size: 0.95rem; margin-bottom: 0.2rem; }
+            .values-scroll .value-card p { font-size: 0.8rem !important; margin-bottom: 0 !important; line-height: 1.5 !important; }
         }
     </style>
 </head>
@@ -294,7 +303,7 @@ if (isLoggedIn()) {
         <div class="row g-4 values-scroll">
             <?php foreach ($coreValues as $cv): ?>
             <div class="col-lg-3 col-md-6 value-col">
-                <div class="card value-card shadow-sm h-100">
+                <div class="card value-card shadow-sm h-100" data-accent="<?= $cv['color'] ?>">
                     <div class="value-icon bg-<?= $cv['color'] ?>-subtle text-<?= $cv['color'] ?>"><i class="bi <?= $cv['icon'] ?>"></i></div>
                     <h5 class="fw-bold"><?= e($cv['title']) ?></h5>
                     <p class="text-muted small mb-0"><?= e($cv['desc']) ?></p>
