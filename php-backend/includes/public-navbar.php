@@ -435,11 +435,7 @@ function _navHasActiveChild($children, $currentPage) {
 <div class="pn-drawer-overlay" id="pnDrawerOverlay" onclick="pnCloseDrawer()"></div>
 <div class="pn-drawer" id="pnDrawer" role="dialog" aria-label="Navigation menu">
     <div class="pn-drawer-header">
-        <?php if ($navLogo): ?>
-            <img src="<?= e($logoPath) ?>" alt="Logo" style="width:100px;height:auto;background:transparent;padding:0;border:none;">
-        <?php else: ?>
-            <span class="text-white fw-bold"><?= e($schoolName) ?></span>
-        <?php endif; ?>
+        <span class="text-white fw-bold"><?= e($schoolName) ?></span>
         <button class="pn-drawer-close" onclick="pnCloseDrawer()" aria-label="Close menu"><i class="bi bi-x-lg"></i></button>
     </div>
     <nav class="pn-drawer-nav">
@@ -482,11 +478,6 @@ function _navHasActiveChild($children, $currentPage) {
         </a>
         <?php endif; ?>
     </nav>
-    <?php if ($_navCta): ?>
-    <div class="pn-drawer-footer">
-        <a href="<?= e($_navCta['url']) ?>" class="pn-drawer-cta"><?= e($_navCta['label']) ?> <i class="bi bi-arrow-right ms-1"></i></a>
-    </div>
-    <?php endif; ?>
 </div>
 
 <!-- Mobile Bottom CTA -->
