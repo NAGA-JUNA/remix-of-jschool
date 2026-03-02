@@ -1,9 +1,9 @@
 <?php
-// Database Configuration — Production (jnvschool.awayindia.com)
+// Database Configuration — Production (jschool.jnvweb.in)
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'svaobtfy_aryanschools');
-define('DB_USER', 'svaobtfy_aryan');
-define('DB_PASS', 'sa1T4HXr@7602626264');
+define('DB_NAME', 'svaobtfy_jschool');
+define('DB_USER', 'svaobtfy_Admin');
+define('DB_PASS', '**********');
 define('DB_CHARSET', 'utf8mb4');
 
 function getDB(): PDO {

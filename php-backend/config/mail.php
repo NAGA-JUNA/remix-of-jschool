@@ -1,10 +1,10 @@
 <?php
 // SMTP Mail Configuration — reads from DB settings table, falls back to defaults
-$_smtpHost = 'mail.aryanschools.edu.in';
+$_smtpHost = 'mail.jschool.jnvweb.in';
 $_smtpPort = 465;
-$_smtpUser = 'contact@aryanschools.edu.in';
+$_smtpUser = 'admin@jschool.jnvweb.in';
 $_smtpPass = 'YOUR_EMAIL_PASSWORD';
-$_smtpFromName = 'Aryan Schools';
+$_smtpFromName = 'J School';
 $_smtpEncryption = 'ssl';
 
 try {
