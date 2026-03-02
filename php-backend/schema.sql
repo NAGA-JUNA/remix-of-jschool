@@ -1330,4 +1330,23 @@ INSERT INTO `users` (`id`,`name`,`email`,`password`,`role`,`phone`,`avatar`,`is_
 ('22','B.Aruna Kamala','arunanaganamania@gmail.com','$2y$10$Y3FYm3EeRc2lWjl2xK0euefTTl.aCLkisViBVz5sZUB8scrNfZdw6','teacher',NULL,NULL,'1',NULL,NULL,NULL,'2026-03-02 14:05:06','2026-03-02 14:05:06'),
 ('23','JANAKI KAMALA KUMARI','jankirammorthy@gmail.com','$2y$10$I/B9jdulBI2PNvNI5NkWH.JSkcDB4m3qoFhMVfGyEoWHnO4jrF8CC','teacher',NULL,NULL,'1',NULL,NULL,NULL,'2026-03-02 14:10:14','2026-03-02 14:10:14');
 
+-- Table: testimonials
+DROP TABLE IF EXISTS `testimonials`;
+CREATE TABLE `testimonials` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `role` varchar(50) NOT NULL DEFAULT 'Parent',
+  `message` text NOT NULL,
+  `rating` tinyint(3) unsigned DEFAULT 5,
+  `photo` varchar(255) DEFAULT NULL,
+  `is_approved` tinyint(1) DEFAULT 0,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `approved_by` int(10) unsigned DEFAULT NULL,
+  `approved_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_approved` (`is_approved`),
+  KEY `fk_testimonial_approver` (`approved_by`),
+  CONSTRAINT `fk_testimonial_approver` FOREIGN KEY (`approved_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 SET FOREIGN_KEY_CHECKS=1;
