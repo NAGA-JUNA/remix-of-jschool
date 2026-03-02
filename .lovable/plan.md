@@ -1,34 +1,24 @@
 
 
-# Fix Core Values Mobile Layout
+# Add Fade-In Animation to Leadership Slider Section
 
-## Problem
-The current mobile layout uses a flex-row (icon left, text right) approach that looks cramped and misaligned. The cards lack visual distinction and proper spacing.
+## Change
+Add a smooth fade-in + slide-up animation to the Leadership section when it scrolls into view, using the existing `IntersectionObserver` pattern already used for the quote banner.
 
-## Solution
-Redesign the mobile Core Values cards to be cleaner, more polished single-column cards with:
+## Implementation (1 file: `php-backend/public/about.php`)
 
-**Card Design (mobile only, below 576px):**
-- Each card gets a colored left border (4px solid, matching value color: warning/danger/primary/success)
-- White background card with subtle shadow and rounded corners
-- Horizontal layout: icon on left (48px circle with colored background), title + description on the right
-- Title in bold, description in muted smaller text below
-- Comfortable padding (1rem 1.25rem) and gap between cards (1rem)
-- Remove the centered text/icon stacking -- keep the horizontal row but fix spacing
+### 1. Set initial hidden state on the Leadership section
+Add `opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease;` as an inline style on the Leadership `<section>` element (line 331), and give it an ID like `leadershipSection` for targeting.
 
-**Key CSS Changes (in `@media (max-width: 575.98px)` block):**
-- Add `border-left: 4px solid` to each `.value-card` with color inherited from the value's theme color
-- Fix icon alignment to vertically center with the title
-- Increase gap between icon and text content to 1rem
-- Set proper line-height on description text
-- Ensure card doesn't have excessive vertical padding
-- Add a subtle `border-radius: 12px` and `box-shadow: 0 2px 8px rgba(0,0,0,0.06)`
+### 2. Observe the section with IntersectionObserver
+In the existing script block (around line 468), extend the observer to also observe the leadership section:
 
-**HTML Change:**
-- Add a `data-color` or inline border-left style to each value card so the left border matches its color (warning=amber, danger=red, primary=blue, success=green)
+```javascript
+document.querySelectorAll('.quote-banner, #leadershipSection').forEach(el => observer.observe(el));
+```
 
-## File Changed
-`php-backend/public/about.php` -- CSS rules in the mobile media query + minor HTML attribute additions for per-card border colors
+This reuses the same observer that already fades in the quote banner -- when the leadership section scrolls 20% into view, it transitions to `opacity: 1` and `translateY(0)`.
 
-## Result
-Clean, professional-looking value cards on mobile matching the design reference -- colored left accent, icon beside text, proper spacing.
+### Result
+The entire Leadership slider section (title, subtitle, slider, and controls) smoothly fades in and slides up when the user scrolls down to it. No new JS logic needed -- just reuses the existing observer.
+
