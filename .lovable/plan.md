@@ -1,72 +1,77 @@
 
-# Fix: Settings Tabs Broken — Orphaned Preview HTML and Extra Closing Divs
+# Add Notification Detail Page (like Event View)
 
-## Root Cause
+## What We're Building
+A new dedicated page `php-backend/public/notification-view.php` that opens when you click on a notification, similar to how `event-view.php` works for events. This gives each notification its own full page with complete content, attachments, sharing options, and related notifications.
 
-When the Page Colors section was inserted, the Theme Color "Live Preview" card's **Preview Body** and **Preview Footer** content got displaced. They ended up AFTER the Page Colors section (lines 1068-1092) instead of inside the `#colorPreview` div where they belong. This created:
+## Changes
 
-1. Line 1066: A `</div>` that prematurely closes `#tab-appearance`
-2. Lines 1068-1092: Orphaned Preview Body + Preview Footer HTML (renders outside any tab)
-3. Lines 1093-1097: Five extra `</div>` tags that close containers belonging to OTHER tabs
+### 1. Create new file: `php-backend/public/notification-view.php`
 
-This breaks all tabs from Content onward — they all show at once.
+A full detail page modeled after `event-view.php`, including:
 
-## Correct Structure
+- **Breadcrumb**: Home > Notifications > [Notification Title]
+- **Hero/Header area**: Type badge, priority badge, pinned indicator, date, view count
+- **Full content**: Complete notification text displayed in a clean card
+- **Attachments section**: List all attachments (from `notification_attachments` table) with download links, showing file type icons (PDF, image, document)
+- **Sidebar**: Notification details card (type, priority, category, tags, posted date, target audience)
+- **Related notifications**: 3 recent notifications of the same type
+- **Share button**: WhatsApp share link (matching existing pattern)
+- **Mark as Read**: Auto-mark as read for logged-in users when they visit the page
+- **View count**: Auto-increment on page visit
 
-The Live Preview card (line 888 `#colorPreview`) should contain three sections in order:
-1. Preview Navbar (lines 890-897) -- already in place
-2. Preview Body (currently orphaned at lines 1068-1080) -- needs to move
-3. Preview Footer (currently orphaned at lines 1082-1092) -- needs to move
+### 2. Update `php-backend/public/notifications.php` (list page)
 
-## Fix (2 edits in one file)
+- Make each notification title clickable, linking to `/public/notification-view.php?id=ID`
+- Add a "View Details" button alongside the existing expand chevron
+- The link will also pass `view_id` to increment the view count
 
-**File: `php-backend/admin/settings.php`**
+## How It Will Look
 
-### Edit 1: Insert Preview Body + Footer back into `#colorPreview` (before line 899)
-
-Move the Preview Body and Preview Footer HTML into the `#colorPreview` div, right after the Preview Navbar (line 897) and before the closing `</div>` at line 899.
-
-After line 897 (`</div>` closing ms-auto) and line 898 (`</div>` closing preview-navbar), insert:
-
-```php
-          <!-- Preview Body -->
-          <div class="p-3 bg-white">
-            <h6 class="preview-heading fw-bold mb-2" style="font-size:.9rem;color:<?=e($s['primary_color']??'#1e40af')?>">Welcome to Our School</h6>
-            <p class="text-muted mb-3" style="font-size:.75rem">This is a sample paragraph...</p>
-            <div class="d-flex gap-2 mb-3">
-              <button class="btn btn-sm preview-btn text-white" style="background:<?=e($s['primary_color']??'#1e40af')?>;border:none;font-size:.75rem">Primary Button</button>
-              <button class="btn btn-sm btn-outline-primary preview-btn-outline" style="...">Outline Button</button>
-            </div>
-            <div class="d-flex gap-3" style="font-size:.75rem">
-              <a href="#" ...>Sample Link</a>
-              <a href="#" ...>Learn More</a>
-            </div>
-          </div>
-          <!-- Preview Footer -->
-          <div class="preview-footer px-3 py-2" style="background:<?=e($s['primary_color']??'#1e40af')?>22">
-            <div class="d-flex justify-content-between align-items-center">
-              <span ...>copy 2025 School</span>
-              <div class="d-flex gap-2">
-                <i class="bi bi-facebook ..."></i>
-                <i class="bi bi-instagram ..."></i>
-                <i class="bi bi-youtube ..."></i>
-              </div>
-            </div>
-          </div>
+```text
++------------------------------------------+
+| Home > Notifications > [Title]           |
++------------------------------------------+
+|                                          |
+| [Urgent] [Academic]        [Pinned]      |
+| Notification Title Here                  |
+| 12 Mar 2025, 10:30 AM  |  45 views      |
+|                                          |
+| +--------------------------------------+ |
+| | About This Notification              | |
+| | Full content text displayed here...  | |
+| +--------------------------------------+ |
+|                                          |
+| +--------------------------------------+ |  +------------------+
+| | Attachments (2 files)                | |  | Details          |
+| | [PDF] Circular.pdf     [Download]    | |  | Type: Academic   |
+| | [IMG] Notice.jpg       [Download]    | |  | Priority: Urgent |
+| +--------------------------------------+ |  | Category: Exam   |
+|                                          |  | Tags: mid-term   |
+| [WhatsApp Share]         234 views       |  | Posted: 12 Mar   |
+|                                          |  +------------------+
+|                                          |  | Related          |
+|                                          |  | - Notif 1        |
+|                                          |  | - Notif 2        |
+|                                          |  +------------------+
++------------------------------------------+
 ```
 
-### Edit 2: Remove orphaned lines 1066-1097
+## Technical Details
 
-Replace lines 1066-1097 (the orphaned `</div>`, Preview Body, Preview Footer, and 5 extra closing divs) with a single `</div>` to properly close `#tab-appearance`:
+### New file: `php-backend/public/notification-view.php`
+- Accepts `?id=N` parameter
+- Queries `notifications` table for the notification (with same filters as list: approved, public, not deleted, not expired, schedule check)
+- Queries `notification_attachments` table for file attachments
+- Queries related notifications (same type, recent, limit 3)
+- Auto-increments `view_count`
+- Auto-inserts into `notification_reads` for logged-in users
+- Redirects to `/public/notifications.php` if notification not found
+- Uses same navbar, footer, styles as other public pages
 
-```php
-</div>
-```
+### Modified file: `php-backend/public/notifications.php`
+- Wrap notification title in an `<a>` tag linking to `notification-view.php?id=ID`
+- Add a "View" button next to the expand chevron
 
-## Result
-
-After fix:
-- `#colorPreview` contains Navbar + Body + Footer previews (complete)
-- Page Colors section remains inside `#tab-appearance` (correct)
-- `#tab-appearance` closes with exactly one `</div>` before Content tab
-- All 8 tabs (General through System) switch correctly
+### No database changes required
+All needed tables (`notifications`, `notification_attachments`, `notification_reads`) already exist.
