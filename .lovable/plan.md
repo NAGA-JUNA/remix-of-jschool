@@ -1,43 +1,48 @@
 
 
-# Add Clickable Links to Admin Bell Dropdown Items
+# Fix: Duplicate "Notifications" in Mobile Menu
 
-## What Changes
-Make each notification item in the admin bell dropdown clickable, navigating to the relevant admin page.
+## Problem
+The mobile drawer shows "Notifications" twice:
+1. Once from the regular nav menu items loop (without badge)
+2. Once from a separate hardcoded bell notification link (with badge count)
 
-## File: `php-backend/includes/header.php`
+## Fix (1 file)
 
-### Edit 1: Notifications item (lines 1421-1427)
-Wrap the `notif-item` div in an anchor tag linking to `/admin/notifications.php`:
+**File: `php-backend/includes/public-navbar.php`**
+
+### Edit 1: Add badge to the regular Notifications link in the drawer loop (lines 466-471)
+
+Update the drawer link rendering for regular (non-parent) items to detect when the item is "Notifications" and append the notification count badge:
+
 ```php
-<a href="/admin/notifications.php" style="text-decoration:none;color:inherit;">
-  <div class="notif-item"> ... </div>
+<a class="pn-drawer-link ..." href="...">
+    <i class="bi ..."></i>
+    <?= e($item['label']) ?>
+    <?php if ($item['url'] === '/public/notifications.php' && $notifCount > 0): ?>
+        <span class="badge bg-danger rounded-pill ms-auto"><?= $notifCount > 9 ? '9+' : $notifCount ?></span>
+    <?php endif; ?>
 </a>
 ```
 
-### Edit 2: Admissions item (lines 1430-1436)
-Wrap the `notif-item` div in an anchor tag linking to `/admin/admissions.php`:
+### Edit 2: Remove the duplicate bell notification link (lines 475-483)
+
+Delete the entire block that adds a second "Notifications" link to the drawer:
+
 ```php
-<a href="/admin/admissions.php" style="text-decoration:none;color:inherit;">
-  <div class="notif-item"> ... </div>
+// REMOVE THIS:
+<?php if ($_navShowBell === '1'): ?>
+<a class="pn-drawer-link" href="/public/notifications.php">
+    <i class="bi bi-bell-fill"></i>
+    Notifications
+    <?php if ($notifCount > 0): ?>
+        <span class="badge bg-danger rounded-pill ms-auto">...</span>
+    <?php endif; ?>
 </a>
+<?php endif; ?>
 ```
 
-### Edit 3: Recruitment item (lines 1439-1445)
-Wrap the `notif-item` div in an anchor tag linking to `/admin/teacher-applications.php` (the "Review now" link already points here, this just makes the whole row clickable):
-```php
-<a href="/admin/teacher-applications.php" style="text-decoration:none;color:inherit;">
-  <div class="notif-item"> ... </div>
-</a>
-```
-
-### Edit 4: Add hover style for clickable items
-Add a CSS rule so items highlight on hover:
-```css
-.notif-dropdown a .notif-item:hover {
-    background: var(--sidebar-hover, rgba(0,0,0,0.04));
-}
-```
-
-Three small edits, no structural changes. Each dropdown item becomes a full clickable link to its admin page.
-
+## Result
+- Mobile menu shows "Notifications" only once
+- The single entry still displays the red badge with unread count
+- Desktop nav and bell icon modal are unaffected
