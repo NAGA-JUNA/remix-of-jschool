@@ -900,7 +900,6 @@ require_once __DIR__.'/../includes/header.php';$s=$settings;?>
       </div></div>
     </div>
   </div>
-</div>
 
   <?php if(isSuperAdmin()):?>
   <!-- Page Colors Section -->
