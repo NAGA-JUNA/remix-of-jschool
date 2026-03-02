@@ -199,7 +199,7 @@ $popupNotifs = $db->query("SELECT id, title, content, type FROM notifications WH
                     <div>
                         <?php if ($isPinned): ?><span class="badge bg-warning-subtle text-warning me-1"><i class="bi bi-pin-fill"></i> Pinned</span><?php endif; ?>
                         <?php if ($isUnread): ?><span class="badge bg-primary-subtle text-primary me-1">New</span><?php endif; ?>
-                        <h5 class="fw-semibold mb-0 d-inline"><?= e($n['title']) ?></h5>
+                        <a href="/public/notification-view.php?id=<?= $n['id'] ?>" class="fw-semibold mb-0 d-inline text-decoration-none text-dark h5" style="font-size:inherit;"><?= e($n['title']) ?></a>
                     </div>
                     <div class="d-flex gap-1">
                         <?php if (($n['priority'] ?? 'normal') !== 'normal'): ?>
@@ -217,6 +217,7 @@ $popupNotifs = $db->query("SELECT id, title, content, type FROM notifications WH
                         <?php if ($loggedIn && $isUnread): ?>
                             <a href="/public/notifications.php?mark_read=<?= $n['id'] ?>" class="btn btn-sm btn-outline-primary py-0 px-2"><i class="bi bi-check2 me-1"></i>Mark Read</a>
                         <?php endif; ?>
+                        <a href="/public/notification-view.php?id=<?= $n['id'] ?>" class="btn btn-sm btn-outline-primary py-0 px-2"><i class="bi bi-eye me-1"></i>View</a>
                         <button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="toggleContent(<?= $n['id'] ?>)"><i class="bi bi-chevron-down"></i></button>
                     </div>
                 </div>
